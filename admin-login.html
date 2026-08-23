@@ -115,5 +115,84 @@ function claimCase(btn) {
   btn.previousElementSibling.textContent = 'Assigned';
 }
 </script>
+
+  <script>
+function toggleOrgOptions() {
+  const type = document.getElementById('orgType').value;
+  const select = document.getElementById('entityList');
+  if(type === 'university') {
+    select.innerHTML = '<option>National Institute of Technology</option><option>Central University Campus</option><option>State Engineering College</option>';
+  } else {
+    select.innerHTML = '<option>Kanker Municipal Council</option><option>West Singhbhum District Admin</option><option>Surguja Development Authority</option>';
+  }
+}
+
+function handleAdminLogin(e) {
+  e.preventDefault();
+  const entity = document.getElementById('entityList').value;
+  document.getElementById('dashTitle').textContent = entity + ' Case Board';
+  
+  // Load dynamic complaints into the admin board
+  loadAdminCases();
+
+  document.querySelector('.admin-card').style.display = 'none';
+  document.getElementById('adminDashboard').style.display = 'block';
+}
+
+function loadAdminCases() {
+  const casesContainer = document.querySelector('.cases');
+  
+  // Default mock data combined with any user-submitted items from localStorage
+  const defaultCases = [
+    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned', type: 'pick' },
+    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review', type: 'pick' },
+    { title: 'Broken transformer near hostel block', location: 'NIT Campus · English', priority: 'High priority', status: 'Assigned', type: 'progress' }
+  ];
+
+  const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  
+  // Format stored reports into HTML elements matching your layout structure
+  let allCasesHTML = '';
+
+  // Render user submitted reports first
+  storedReports.forEach(rep => {
+    allCasesHTML += `
+      <div class="case" style="border-left: 4px solid var(--green);">
+        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (New)</small></div>
+        <div class="priority">${rep.priority}</div>
+        <div class="status">${rep.status}</div>
+        <button class="secondary" onclick="claimCase(this)">Pick Task</button>
+      </div>
+    `;
+  });
+
+  // Render default mock cases next
+  defaultCases.forEach(c => {
+    const btnHTML = c.type === 'pick' 
+      ? `<button class="secondary" onclick="claimCase(this)">Pick Task</button>` 
+      : `<button class="primary" style="padding: 6px 12px; font-size: 12px;">In Progress</button>`;
+    
+    allCasesHTML += `
+      <div class="case">
+        <div><strong>${c.title}</strong><small>${c.location}</small></div>
+        <div class="priority">${c.priority}</div>
+        <div class="status">${c.status}</div>
+        ${btnHTML}
+      </div>
+    `;
+  });
+
+  casesContainer.innerHTML = allCasesHTML;
+}
+
+function claimCase(btn) {
+  btn.className = 'primary';
+  btn.style.padding = '6px 12px';
+  btn.style.fontSize = '12px';
+  btn.textContent = 'Assigned to You';
+  btn.previousElementSibling.textContent = 'Assigned';
+}
+</script>
+
 </body>
 </html>
