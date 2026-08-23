@@ -131,59 +131,31 @@ function handleAdminLogin(e) {
 function loadAdminCases() {
   const casesContainer = document.querySelector('.cases');
   const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  const currentEntity = document.getElementById('entityList').value;
   let allCasesHTML = '';
 
-  // Filter dynamic reports submitted by citizens so each entity sees only matching cases or unassigned ones
+  // Render user submitted reports from localStorage
   storedReports.forEach((rep, index) => {
-    const isTargetedToEntity = rep.authority && (
-      rep.authority.toLowerCase().includes(currentEntity.toLowerCase()) || 
-      currentEntity.toLowerCase().includes(rep.authority.toLowerCase()) ||
-      (document.getElementById('orgType').value === 'university' && rep.authority === 'University / Educational Campus') ||
-      (document.getElementById('orgType').value === 'local_body' && rep.authority === 'Local Municipal Body / Panchayat')
-    );
+    // Check if the case is picked up. If picked, show "Update Progress" instead of a static button.
+    const isAssigned = rep.status && rep.status !== 'Unassigned' && rep.status !== 'Under review';
+    
+    const btnHTML = isAssigned 
+      ? `<button class="primary" style="padding: 6px 12px; font-size: 12px; background: #0284c7; border: none;" onclick="openUpdateModal(${index})">Update Progress</button>`
+      : `<button class="secondary" onclick="claimCase(${index})">Pick Task</button>`;
 
-    if (isTargetedToEntity) {
-      const isAssigned = rep.status && rep.status !== 'Unassigned' && rep.status !== 'Under review';
-      
-      const btnHTML = isAssigned 
-        ? `<button class="primary" style="padding: 6px 12px; font-size: 12px; background: #0284c7; border: none;" onclick="openUpdateModal(${index})">Update Progress</button>`
-        : `<button class="secondary" onclick="claimCase(${index})">Pick Task</button>`;
-
-      allCasesHTML += `
-        <div class="case" style="border-left: 4px solid var(--green);">
-          <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (${rep.id})</small></div>
-          <div class="priority">${rep.priority || 'High'}</div>
-          <div class="status">${rep.status || 'Unassigned'}</div>
-          ${btnHTML}
-        </div>
-      `;
-    }
+    allCasesHTML += `
+      <div class="case" style="border-left: 4px solid var(--green);">
+        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (${rep.id})</small></div>
+        <div class="priority">${rep.priority || 'High'}</div>
+        <div class="status">${rep.status || 'Unassigned'}</div>
+        ${btnHTML}
+      </div>
+    `;
   });
 
-  // Unique mock datasets for each entity so boards look completely distinct
-  const mockDatabase = {
-    'Birla Institute of Technology Mesra': [
-      { title: 'Hostel 3 Drainage Blockage', location: 'BIT Mesra · English', priority: 'High priority', status: 'Unassigned' },
-      { title: 'Library Wi-Fi Connectivity Issue', location: 'BIT Mesra · English', priority: 'Medium', status: 'Under review' }
-    ],
-    'Indian Institute of Technology Dhanbhad': [
-      { title: 'Lab Equipment Power Surge Issue', location: 'IIT Dhanbad · English', priority: 'High priority', status: 'Unassigned' },
-      { title: 'Main Gate Traffic Management', location: 'IIT Dhanbad · Hindi', priority: 'Low', status: 'Under review' }
-    ],
-    'National Institute of Technology Jamshedpur': [
-      { title: 'Cafeteria Water Cooler Malfunction', location: 'NIT Jamshedpur · English', priority: 'Medium', status: 'Unassigned' }
-    ],
-    'Kanker Municipal Council': [
-      { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned' }
-    ],
-    'West Singhbhum District Admin': [
-      { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review' }
-    ]
-  };
-
-  const defaultCases = mockDatabase[currentEntity] || [
-    { title: 'General Infra Maintenance Request', location: currentEntity + ' · English', priority: 'Medium', status: 'Unassigned' }
+  // Render static mock cases
+  const defaultCases = [
+    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned' },
+    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review' }
   ];
 
   defaultCases.forEach(c => {
@@ -203,13 +175,18 @@ function loadAdminCases() {
 function claimCase(index) {
   let storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
   if(storedReports[index]) {
+    // Grab the name of the entity that just logged in from the dropdown
     const currentEntity = document.getElementById('entityList').value;
     
+    // Update the status
     storedReports[index].status = 'Assigned';
+    
+    // THE FIX: Transfer ownership of the complaint to the logged-in entity
     storedReports[index].authority = currentEntity; 
     
+    // Save it back to local storage
     localStorage.setItem('jantaSetuReports', JSON.stringify(storedReports));
-    loadAdminCases(); 
+    loadAdminCases(); // Reload list to reflect the updated state instantly
   }
 }
 
@@ -240,12 +217,15 @@ function submitProgressUpdate() {
 
   let reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
   
+  // Ensure the updates array exists
   if (!reports[currentActiveIndex].updates) {
     reports[currentActiveIndex].updates = [];
   }
   
+  // Fetch logged in entity name
   const entity = document.getElementById('entityList').value || 'University / Authority';
   
+  // Push the new update payload for track.html to read
   reports[currentActiveIndex].updates.unshift({
     by: entity,
     stage: stage,
@@ -254,6 +234,7 @@ function submitProgressUpdate() {
     date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
   });
 
+  // Update status and save
   reports[currentActiveIndex].status = stage;
   localStorage.setItem('jantaSetuReports', JSON.stringify(reports));
   
