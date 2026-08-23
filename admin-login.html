@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Login | JantaSetu</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="top">
+  <a href="index.html" class="brand"><div class="mark"></div>JantaSetu Admin</a>
+  <nav><a href="index.html">Home</a><a href="report.html">Citizen Portal</a></nav>
+</header>
+
+<main class="page-container">
+  <div class="auth-card admin-card">
+    <div class="auth-head">
+      <h2>Authority & Campus Portal Login</h2>
+      <p>Log in to access assigned complaints, pick tasks, and update progress status.</p>
+    </div>
+    <div class="auth-body">
+      <form onsubmit="handleAdminLogin(event)">
+        <div class="field">
+          <label class="label">Organization Type</label>
+          <select class="select" id="orgType" onchange="toggleOrgOptions()">
+            <option value="local_body">Local Government Body / Municipality</option>
+            <option value="university">University / Educational Institute</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Select Entity</label>
+          <select class="select" id="entityList">
+            <option>Kanker Municipal Council</option>
+            <option>West Singhbhum District Admin</option>
+            <option>Surguja Development Authority</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Official Email / ID</label>
+          <input type="email" placeholder="admin@org.gov.in" required />
+        </div>
+        <div class="field">
+          <label class="label">Password</label>
+          <input type="password" placeholder="••••••••" required />
+        </div>
+        <div class="demo-note">Demo Credentials: Choose any entity and click <b>Access Dashboard</b>.</div>
+        <div class="auth-actions">
+          <button type="submit" class="primary">Access Dashboard &rarr;</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <section class="dashboard" id="adminDashboard" style="display:none;">
+    <div class="dash">
+      <div class="dash-top">
+        <div>
+          <div class="eyebrow">Official Management Board</div>
+          <h2 id="dashTitle">Municipal Case Board</h2>
+          <p class="section-intro">Review reports submitted by citizens, assign tasks, and track resolutions.</p>
+        </div>
+        <button class="secondary">Export Report Logs</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="small">Pending Pick</div><div class="big">14</div><div class="small">Unassigned cases</div></div>
+        <div class="stat"><div class="small">In Progress</div><div class="big">21</div><div class="small">Assigned to staff</div></div>
+        <div class="stat"><div class="small">Resolved This Month</div><div class="big">74</div><div class="small">Verified closed</div></div>
+      </div>
+      <div class="cases">
+        <div class="case">
+          <div><strong>Large potholes near weekly market</strong><small>Kanker, Ward 4 · Gondi</small></div>
+          <div class="priority">High priority</div>
+          <div class="status">Unassigned</div>
+          <button class="secondary" onclick="claimCase(this)">Pick Task</button>
+        </div>
+        <div class="case">
+          <div><strong>Waterlogging at primary school entrance</strong><small>West Singhbhum · Ho</small></div>
+          <div class="priority">Medium</div>
+          <div class="status">Under review</div>
+          <button class="secondary" onclick="claimCase(this)">Pick Task</button>
+        </div>
+        <div class="case">
+          <div><strong>Broken transformer near hostel block</strong><small>NIT Campus · English</small></div>
+          <div class="priority">High priority</div>
+          <div class="status">Assigned</div>
+          <button class="primary" style="padding: 6px 12px; font-size: 12px;">In Progress</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleOrgOptions() {
+  const type = document.getElementById('orgType').value;
+  const select = document.getElementById('entityList');
+  if(type === 'university') {
+    select.innerHTML = '<option>National Institute of Technology</option><option>Central University Campus</option><option>State Engineering College</option>';
+  } else {
+    select.innerHTML = '<option>Kanker Municipal Council</option><option>West Singhbhum District Admin</option><option>Surguja Development Authority</option>';
+  }
+}
+function handleAdminLogin(e) {
+  e.preventDefault();
+  const entity = document.getElementById('entityList').value;
+  document.getElementById('dashTitle').textContent = entity + ' Case Board';
+  document.querySelector('.admin-card').style.display = 'none';
+  document.getElementById('adminDashboard').style.display = 'block';
+}
+function claimCase(btn) {
+  btn.className = 'primary';
+  btn.style.padding = '6px 12px';
+  btn.style.fontSize = '12px';
+  btn.textContent = 'Assigned to You';
+  btn.previousElementSibling.textContent = 'Assigned';
+}
+</script>
+</body>
+</html>
