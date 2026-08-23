@@ -12,7 +12,7 @@ It is deployed as a highly optimized, lightweight website using GitHub Pages.
 
 You can access the live working version directly through the link below.
 
-**[Live Demo: https://your-username.github.io/janta-setu]**
+**[Live Demo: https://brainy-joseph.github.io/digital-complaint-portal]**
 
 ---
 
