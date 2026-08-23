@@ -13,35 +13,30 @@
     <a href="#how">How it works</a>
     <a href="report.html" class="navbtn">Report Issue</a>
     <a href="admin-login.html" class="navbtn primary-nav">Admin Portal</a>
-    <select id="langSelect" class="lang-switch" onchange="toggleSiteLang(this.value)">
-      <option value="en">English</option>
-      <option value="hi">हिन्दी</option>
-    </select>
   </nav>
 </header>
 
 <main>
 <section class="hero">
   <div>
-    <div class="eyebrow" id="heroEyebrow">A bridge between communities & action</div>
-    <h1 id="heroTitle">Say it in your language. Get it heard.</h1>
-    <p id="heroDesc">JantaSetu converts community voice and text reports into actionable, tracked cases for local government bodies, universities, and partner organizations.</p>
+    <div class="eyebrow">A bridge between communities & action</div>
+    <h1>Say it in your language. Get it heard.</h1>
+    <p>JantaSetu converts community voice and text reports into actionable, tracked cases for local government bodies, universities, and partner organizations.</p>
     
     <div class="portal-selection">
       <div class="portal-card">
-        <h3 id="citizenTitle">Citizen Portal</h3>
-        <p id="citizenDesc">Report local infrastructure, water, or campus issues in your preferred language.</p>
-        <a href="report.html" class="primary button-link" id="citizenBtn">Report an Issue &rarr;</a>
+        <h3>Citizen Portal</h3>
+        <p>Report local infrastructure, water, or campus issues in your preferred language.</p>
+        <a href="report.html" class="primary button-link">Report an Issue &rarr;</a>
       </div>
       <div class="portal-card alt">
-        <h3 id="adminTitle">Authority & University Portal</h3>
-        <p id="adminDesc">Log in as an administrative body to view assigned reports, update statuses, and take action.</p>
-        <a href="admin-login.html" class="secondary button-link" id="adminBtn">Login as Admin &rarr;</a>
+        <h3>Authority & University Portal</h3>
+        <p>Log in as an administrative body to view assigned reports, update statuses, and take action.</p>
+        <a href="admin-login.html" class="secondary button-link">Login as Admin &rarr;</a>
       </div>
     </div>
   </div>
 
-  
   <div class="hero-card">
     <div class="card-head">
       <div>
@@ -51,7 +46,6 @@
       <span class="tag" id="liveTag">3 Active Cases</span>
     </div>
 
-    <!-- Filter Buttons -->
     <div class="board-filter-row">
       <button class="filter-chip active" onclick="filterHomeBoard('all', this)">All</button>
       <button class="filter-chip" onclick="filterHomeBoard('Roads', this)">Roads</button>
@@ -59,7 +53,6 @@
       <button class="filter-chip" onclick="filterHomeBoard('Water', this)">Water</button>
     </div>
 
-    <!-- Case Container -->
     <div id="homeCaseContainer">
       <!-- Rendered by JavaScript -->
     </div>
@@ -85,94 +78,6 @@
 
 <footer><span>JantaSetu · SIH prototype</span><span>Built for communities, designed for action.</span></footer>
 
-<script>
-
-let homeCases = [
-  { id: "JS-101", title: "Road damage near market", desc: "Our road near the weekly market has deep potholes.", category: "Roads", loc: "Kanker · CG", lang: "Gondi", status: "Open", assigned: false },
-  { id: "JS-102", title: "Hostel Water Supply", desc: "Block C low pressure water issue for 3 days.", category: "University", loc: "NIT Campus", lang: "English", status: "Open", assigned: false },
-  { id: "JS-103", title: "Pipeline Leakage Ward 4", desc: "Main drinking pipeline leaking near community hall.", category: "Water", loc: "Surguja", lang: "Hindi", status: "In Progress", assigned: true }
-];
-
-let activeCategory = "all";
-
-function renderHomeBoard() {
-  const container = document.getElementById("homeCaseContainer");
-  const filtered = homeCases.filter(c => activeCategory === "all" || c.category === activeCategory);
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-demo">No issues in this category.</div>`;
-    return;
-  }
-
-  container.innerHTML = filtered.map(c => `
-    <div class="issue">
-      <div class="issue-top">
-        <b>${c.title}</b>
-        <span class="tag">${c.category}</span>
-      </div>
-      <p>"${c.desc}"</p>
-      <div class="meta-row">
-        <div class="meta">${c.loc} <span>•</span> ${c.lang}</div>
-        <button class="action-mini-btn ${c.assigned ? 'claimed' : ''}" onclick="toggleClaimCase('${c.id}')">
-          ${c.assigned ? '✓ Claimed' : 'Pick Task'}
-        </button>
-      </div>
-    </div>
-  `).join('');
-
-  document.getElementById("liveTag").textContent = `${filtered.length} Active Cases`;
-}
-
-function filterHomeBoard(cat, btn) {
-  activeCategory = cat;
-  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderHomeBoard();
-}
-
-function toggleClaimCase(id) {
-  const target = homeCases.find(c => c.id === id);
-  if (target) {
-    target.assigned = !target.assigned;
-    target.status = target.assigned ? "Assigned" : "Open";
-    renderHomeBoard();
-  }
-}
-
-const homeTranslations = {
-  en: {
-    eyebrow: "A bridge between communities & action",
-    title: "Say it in your language. Get it heard.",
-    desc: "JantaSetu converts community voice and text reports into actionable, tracked cases for local government bodies, universities, and partner organizations.",
-    citizenT: "Citizen Portal",
-    citizenD: "Report local infrastructure, water, or campus issues in your preferred language.",
-    adminT: "Authority & University Portal",
-    adminD: "Log in as an administrative body to view assigned reports, update statuses, and take action."
-  },
-  hi: {
-    eyebrow: "समुदाय और कार्रवाई के बीच एक सेतु",
-    title: "अपनी भाषा में कहें। अपनी आवाज पहुंचाएं।",
-    desc: "जनतासेतु स्थानीय निकायों, विश्वविद्यालयों और भागीदार संगठनों के लिए सामुदायिक आवाज को कार्रवाई योग्य मामलों में बदलता है।",
-    citizenT: "नागरिक पोर्टल",
-    citizenD: "अपनी पसंदीदा भाषा में स्थानीय बुनियादी ढांचे, पानी या परिसर की समस्याओं की रिपोर्ट करें।",
-    adminT: "प्राधिकरण एवं विश्वविद्यालय पोर्टल",
-    adminD: "सौंपी गई रिपोर्ट देखने और कार्रवाई करने के लिए प्रशासनिक निकाय के रूप में लॉगिन करें।"
-  }
-};
-
-function toggleSiteLang(lang) {
-  const t = homeTranslations[lang] || homeTranslations.en;
-  document.getElementById("heroEyebrow").textContent = t.eyebrow;
-  document.getElementById("heroTitle").textContent = t.title;
-  document.getElementById("heroDesc").textContent = t.desc;
-  document.getElementById("citizenTitle").textContent = t.citizenT;
-  document.getElementById("citizenDesc").textContent = t.citizenD;
-  document.getElementById("adminTitle").textContent = t.adminT;
-  document.getElementById("adminDesc").textContent = t.adminD;
-}
-
-
-renderHomeBoard();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
