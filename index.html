@@ -132,6 +132,22 @@
 
 <footer><span>JantaSetu · SIH prototype</span><span>Built for communities, designed for action.</span></footer>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const map = L.map('districtMap', { zoomControl: false }).setView([21.2787, 81.8661], 7);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+  const locations = [
+    { name: 'Kanker Municipal Council', coords: [20.2704, 81.4903], count: '42 Open Cases', color: '#ff5c5c' },
+    { name: 'West Singhbhum District', coords: [22.5592, 85.8139], count: '28 Open Cases', color: '#f5a623' },
+    { name: 'Surguja Development Authority', coords: [23.1328, 83.2035], count: '19 Open Cases', color: '#38ef7d' }
+  ];
+  locations.forEach(loc => {
+    L.circleMarker(loc.coords, { radius: 12, color: loc.color, fillColor: loc.color, fillOpacity: 0.7 }).addTo(map).bindPopup(`<b>${loc.name}</b><br>${loc.count}`);
+  });
+});
+</script>
+
+
 <script src="script.js"></script>
 </body>
 </html>
