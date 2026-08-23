@@ -8,8 +8,7 @@
 </head>
 <body>
 <header class="top">
-<a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
-
+  <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
   <nav>
     <a href="index.html">Home</a>
     <span class="user-pill" id="userPill">✓ <span id="userName">Verified user</span></span>
@@ -80,56 +79,6 @@ function setPane(step){
   ['p1','p2','p3'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i<step));
   if(step===2){
     const t=document.getElementById('issueText').value.trim();
-    if(t){document.getElementById('translatedText').textContent='English translation preview: '+t}
-  }
-}
-function nextStep(step){setPane(step);window.scrollTo({top:0,behavior:'smooth'});}
-let recording=false;
-function toggleRecord(){
-  recording=!recording;
-  const b=document.getElementById('micBtn'),t=document.getElementById('voiceTitle'),s=document.getElementById('voiceSub');
-  if(recording){b.classList.add('recording');b.textContent='■';t.textContent='Recording…';s.textContent='Tap again to stop';}
-  else{b.classList.remove('recording');b.textContent='●';t.textContent='Recording saved';s.textContent='Voice input ready for processing.';}
-}
-let verifiedUser = false, otpSent = false;
-function openAuth(){ document.getElementById('authOverlay').classList.add('show'); showAuthStep(1); }
-function closeAuth(e){ if(!e || e.target.id==='authOverlay') document.getElementById('authOverlay').classList.remove('show'); }
-function showAuthStep(n){
-  [1,2,3].forEach(i=>document.getElementById('authStep'+i).style.display=i===n?'block':'none');
-  document.getElementById('authError').classList.remove('show'); document.getElementById('otpError').classList.remove('show');
-}
-function sendOTP(){
-  const name=document.getElementById('authName').value.trim(); const phone=document.getElementById('authPhone').value.trim();
-  if(!otpSent){
-    if(name.length<2){return showError('authError','Please enter your full name.');}
-    if(!/^\d{10}$/.test(phone)){return showError('authError','Please enter a valid 10-digit mobile number.');}
-    otpSent=true;
-  }
-  showAuthStep(2); document.getElementById('otpInput').focus();
-}
-function verifyOTP(){
-  const otp=document.getElementById('otpInput').value.trim();
-  if(otp!=='123456') return showError('otpError','Incorrect OTP. Use 123456 for demo.');
-  verifiedUser=true; showAuthStep(3);
-}
-function finishAuth(){
-  document.getElementById('authOverlay').classList.remove('show');
-  document.getElementById('authNav').textContent='✓ Verified'; document.getElementById('authNav').disabled=true;
-  const name=document.getElementById('authName').value.trim() || 'Verified user';
-  document.getElementById('userName').textContent=name; document.getElementById('userPill').classList.add('show');
-  document.getElementById('verifyHint').textContent='Verified as '+name+'.';
-}
-function continueFromReport(){ if(!verifiedUser){ openAuth(); return; } nextStep(2); }
-function showError(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
-</script>
-
-  <script>
-function setPane(step){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById('pane'+step).classList.add('active');
-  ['p1','p2','p3'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i<step));
-  if(step===2){
-    const t=document.getElementById('issueText').value.trim();
     if(t){document.getElementById('translatedText').textContent=t}
   }
 }
@@ -161,9 +110,8 @@ function saveComplaintToStorage() {
     date: new Date().toLocaleDateString()
   };
 
-  // Fetch existing reports or start a new array
   let existingReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  existingReports.unshift(newReport); // Add new report to the top
+  existingReports.unshift(newReport);
   localStorage.setItem('jantaSetuReports', JSON.stringify(existingReports));
 }
 
@@ -206,6 +154,5 @@ function finishAuth(){
 function continueFromReport(){ if(!verifiedUser){ openAuth(); return; } nextStep(2); }
 function showError(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
 </script>
-
 </body>
 </html>
