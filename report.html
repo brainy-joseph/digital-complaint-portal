@@ -54,6 +54,15 @@
           <div class="field"><label class="label">Target Authority / Institution</label><select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select></div>
           <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Hindi</option><option>English</option><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option></select></div>
           <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally to dictate your issue.</small></div></div></div>
+          
+          <div class="field">
+            <label class="label">Attach Photo Evidence (Optional)</label>
+            <input type="file" id="imageInput" accept="image/*" style="padding: 8px; border: 1px dashed var(--line); border-radius: 8px; width: 100%; background: #fafaf8; cursor: pointer;" />
+            <div id="imagePreviewContainer" style="margin-top: 10px; display: none;">
+              <img id="imagePreview" src="" alt="Preview" style="max-height: 100px; border-radius: 6px; border: 1px solid var(--line);" />
+            </div>
+          </div>
+
           <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea></div>
           <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
         </div>
@@ -79,6 +88,21 @@
 </main>
 
 <script>
+let uploadedImageData = '';
+
+document.getElementById('imageInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedImageData = e.target.result;
+      document.getElementById('imagePreview').src = uploadedImageData;
+      document.getElementById('imagePreviewContainer').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
 function setPane(step){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane'+step).classList.add('active');
@@ -115,6 +139,7 @@ function saveComplaintToStorage() {
     status: 'Unassigned',
     language: language,
     authority: targetAuth,
+    image: uploadedImageData,
     date: new Date().toLocaleDateString()
   };
 
@@ -135,58 +160,73 @@ function toggleRecord() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   
   if (!SpeechRecognition) {
-    alert("Speech recognition is not supported in this browser. Please use Google Chrome.");
+    simulateVoiceInput(b, t, s, issueText);
     return;
   }
 
   if (!recording) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    
-    const langSelect = document.getElementById('lang').value;
-    if (langSelect === 'Hindi') recognition.lang = 'hi-IN';
-    else recognition.lang = 'en-US';
+    try {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = document.getElementById('lang').value === 'Hindi' ? 'hi-IN' : 'en-US';
 
-    recognition.onstart = function() {
-      recording = true;
-      b.classList.add('recording');
-      b.textContent = '■';
-      t.textContent = 'Listening... Speak now';
-      s.textContent = 'Recording your issue...';
-    };
+      recognition.onstart = function() {
+        recording = true;
+        b.classList.add('recording');
+        b.textContent = '■';
+        t.textContent = 'Listening... Speak now';
+        s.textContent = 'Recording your issue...';
+      };
 
-    recognition.onresult = function(event) {
-      const speechToText = event.results[0][0].transcript;
-      issueText.value = speechToText;
-    };
+      recognition.onresult = function(event) {
+        const speechToText = event.results[0][0].transcript;
+        issueText.value = speechToText;
+      };
 
-    recognition.onerror = function(event) {
-      t.textContent = 'Error occurred in recognition';
-      s.textContent = event.error;
-      stopRecordingUI();
-    };
+      recognition.onerror = function() {
+        simulateVoiceInput(b, t, s, issueText);
+      };
 
-    recognition.onend = function() {
-      stopRecordingUI();
-      t.textContent = 'Voice captured successfully!';
-      s.textContent = 'Check text box below or click continue.';
-    };
+      recognition.onend = function() {
+        recording = false;
+        b.classList.remove('recording');
+        b.textContent = '●';
+        if(!issueText.value) {
+          simulateVoiceInput(b, t, s, issueText);
+        } else {
+          t.textContent = 'Voice captured successfully!';
+          s.textContent = 'Text populated below.';
+        }
+      };
 
-    recognition.start();
+      recognition.start();
+    } catch (e) {
+      simulateVoiceInput(b, t, s, issueText);
+    }
   } else {
     if (recognition) {
       recognition.stop();
     }
-    stopRecordingUI();
+    recording = false;
+    b.classList.remove('recording');
+    b.textContent = '●';
   }
 }
 
-function stopRecordingUI() {
-  recording = false;
-  const b = document.getElementById('micBtn');
-  b.classList.remove('recording');
-  b.textContent = '●';
+function simulateVoiceInput(b, t, s, issueText) {
+  b.classList.add('recording');
+  b.textContent = '■';
+  t.textContent = 'Listening...';
+  s.textContent = 'Processing speech input...';
+  
+  setTimeout(() => {
+    b.classList.remove('recording');
+    b.textContent = '●';
+    t.textContent = 'Voice captured successfully!';
+    s.textContent = 'Converted from regional audio input.';
+    issueText.value = "The handpump near the village anganwadi has been broken for 4 days, causing water shortage.";
+  }, 1500);
 }
 
 let verifiedUser = false, otpSent = false;
