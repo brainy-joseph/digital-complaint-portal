@@ -735,5 +735,62 @@ footer {
     transform: none;
   }
 }
+/* Multi-page & Action Card Additions */
+a.button-link {
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.primary-nav {
+  background: var(--green);
+  color: white !important;
+}
+
+.portal-selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 25px;
+}
+
+.portal-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.portal-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.portal-card p {
+  font-size: 13px !important;
+  margin: 0 0 16px !important;
+  line-height: 1.4 !important;
+}
+
+.portal-card.alt {
+  background: #f3f5ef;
+  border-color: #d6ded2;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 6%;
+}
+
+.admin-card {
+  margin: 20px auto;
+}
+
+@media(max-width: 650px) {
+  .portal-selection {
+    grid-template-columns: 1fr;
+  }
+}
 
 
