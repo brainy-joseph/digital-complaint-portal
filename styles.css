@@ -536,3 +536,53 @@ body { top: 0px !important; }
   font-size: 13px !important;
 }
 
+
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+/* Hide top iframe bar and popups */
+.goog-te-banner-frame.skiptranslate,
+iframe.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Hide Google logos, icons, and extraneous text nodes */
+.goog-logo-link,
+.goog-te-gadget span,
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+/* Remove default gadget container text styling */
+.goog-te-gadget {
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Style the injected <select> box as a clean UI pill */
+.goog-te-combo {
+  display: inline-block !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  background: #f7f7f5 !important;
+  border: 1px solid var(--line, #e2e2de) !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  cursor: pointer !important;
+  outline: none !important;
+  margin: 0 !important;
+}
+
+.goog-te-combo:hover {
+  border-color: var(--green, #2d6a4f) !important;
+}
+
+
