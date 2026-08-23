@@ -52,8 +52,8 @@
         <div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
         <div class="pane active" id="pane1">
           <div class="field"><label class="label">Target Authority / Institution</label><select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select></div>
-          <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option><option>Hindi</option><option>English</option></select></div>
-          <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally for up to 60 seconds.</small></div></div></div>
+          <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Hindi</option><option>English</option><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option></select></div>
+          <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally to dictate your issue.</small></div></div></div>
           <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea></div>
           <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
         </div>
@@ -123,12 +123,70 @@ function saveComplaintToStorage() {
   localStorage.setItem('jantaSetuReports', JSON.stringify(existingReports));
 }
 
-let recording=false;
-function toggleRecord(){
-  recording=!recording;
-  const b=document.getElementById('micBtn'),t=document.getElementById('voiceTitle'),s=document.getElementById('voiceSub');
-  if(recording){b.classList.add('recording');b.textContent='■';t.textContent='Recording…';s.textContent='Tap again to stop';}
-  else{b.classList.remove('recording');b.textContent='●';t.textContent='Recording saved';s.textContent='Voice input ready for processing.';}
+let recognition = null;
+let recording = false;
+
+function toggleRecord() {
+  const b = document.getElementById('micBtn');
+  const t = document.getElementById('voiceTitle');
+  const s = document.getElementById('voiceSub');
+  const issueText = document.getElementById('issueText');
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if (!SpeechRecognition) {
+    alert("Speech recognition is not supported in this browser. Please use Google Chrome.");
+    return;
+  }
+
+  if (!recording) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    const langSelect = document.getElementById('lang').value;
+    if (langSelect === 'Hindi') recognition.lang = 'hi-IN';
+    else recognition.lang = 'en-US';
+
+    recognition.onstart = function() {
+      recording = true;
+      b.classList.add('recording');
+      b.textContent = '■';
+      t.textContent = 'Listening... Speak now';
+      s.textContent = 'Recording your issue...';
+    };
+
+    recognition.onresult = function(event) {
+      const speechToText = event.results[0][0].transcript;
+      issueText.value = speechToText;
+    };
+
+    recognition.onerror = function(event) {
+      t.textContent = 'Error occurred in recognition';
+      s.textContent = event.error;
+      stopRecordingUI();
+    };
+
+    recognition.onend = function() {
+      stopRecordingUI();
+      t.textContent = 'Voice captured successfully!';
+      s.textContent = 'Check text box below or click continue.';
+    };
+
+    recognition.start();
+  } else {
+    if (recognition) {
+      recognition.stop();
+    }
+    stopRecordingUI();
+  }
+}
+
+function stopRecordingUI() {
+  recording = false;
+  const b = document.getElementById('micBtn');
+  b.classList.remove('recording');
+  b.textContent = '●';
 }
 
 let verifiedUser = false, otpSent = false;
