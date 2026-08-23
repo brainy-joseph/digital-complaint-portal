@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Report an Issue | JantaSetu</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="top">
+  <a href="index.html" class="brand"><div class="mark"></div>JantaSetu</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <span class="user-pill" id="userPill">✓ <span id="userName">Verified user</span></span>
+    <button class="navbtn" id="authNav" onclick="openAuth()">Verify identity</button>
+  </nav>
+</header>
+
+<div class="auth-overlay" id="authOverlay" onclick="closeAuth(event)">
+  <div class="auth-card" onclick="event.stopPropagation()">
+    <div class="auth-head"><h2>Verify your identity</h2><p>One simple verification step before submitting a public complaint.</p></div>
+    <div class="auth-body">
+      <div class="auth-badge">MOBILE OTP VERIFICATION</div>
+      <div id="authStep1">
+        <div class="profile-grid">
+          <div class="field"><label class="label">Full name <span class="required">*</span></label><input id="authName" placeholder="Enter your name" /></div>
+          <div class="field"><label class="label">Village / District / Campus</label><input id="authLocation" placeholder="e.g. Kanker or Main Campus" /></div>
+          <div class="field full"><label class="label">Mobile number <span class="required">*</span></label><input id="authPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" /></div>
+        </div>
+        <div class="auth-error" id="authError"></div>
+        <div class="auth-actions"><button class="secondary" onclick="closeAuth()">Cancel</button><button class="primary" onclick="sendOTP()">Send OTP</button></div>
+      </div>
+      <div id="authStep2" style="display:none">
+        <div class="field"><label class="label">Enter 6-digit OTP</label><div class="verify-row"><input class="otp" id="otpInput" inputmode="numeric" maxlength="6" placeholder="••••••" /><button class="secondary" onclick="sendOTP()">Resend OTP</button></div></div>
+        <div class="demo-note">Hackathon demo mode: use <b>123456</b> as the OTP.</div>
+        <div class="auth-error" id="otpError"></div>
+        <div class="auth-actions"><button class="secondary" onclick="showAuthStep(1)">Back</button><button class="primary" onclick="verifyOTP()">Verify identity</button></div>
+      </div>
+      <div id="authStep3" style="display:none">
+        <div class="verified-box show">✓ Identity verified successfully.</div>
+        <div class="auth-actions"><button class="primary" onclick="finishAuth()">Continue to report issue</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="page-container">
+  <div class="report-wrap">
+    <div class="report">
+      <div class="report-banner"><h2>Report an issue</h2><p>Verified reporting keeps case records trusted and accurate.</p></div>
+      <div class="report-body">
+        <div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
+        <div class="pane active" id="pane1">
+          <div class="field"><label class="label">Target Authority / Institution</label><select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select></div>
+          <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option><option>Hindi</option><option>English</option></select></div>
+          <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally for up to 60 seconds.</small></div></div></div>
+          <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea></div>
+          <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
+        </div>
+        <div class="pane" id="pane2">
+          <div class="field"><label class="label">Converted English report</label><div class="preview"><strong id="translatedTitle">Issue Summary</strong><span id="translatedText">The main pathway has waterlogging and becomes difficult to use after rain.</span></div></div>
+          <div class="field"><label class="label">Location / Ward / Hostel</label><input placeholder="Village, ward, or department name" value="Kanker, District Ward 4" /></div>
+          <div class="field"><label class="label">Category</label><select class="select"><option>Roads & Transport</option><option>Water & Sanitation</option><option>Electricity & Power</option><option>Campus Infrastructure</option></select></div>
+          <div class="cta-row"><button class="secondary" onclick="nextStep(1)">Back</button><button class="primary" onclick="nextStep(3)">Submit report</button></div>
+        </div>
+        <div class="pane" id="pane3">
+          <div style="text-align:center;padding:35px 15px 25px"><div style="font-size:48px">✓</div><h3 style="font-size:25px;margin:10px 0 8px">Report submitted</h3><p style="color:var(--muted);line-height:1.6;max-width:520px;margin:0 auto">Your report has been converted into a structured case and routed to the corresponding authority dashboard.</p><div style="display:inline-block;margin-top:18px;padding:9px 12px;border-radius:999px;background:#eef5ef;color:var(--green);font-size:12px;font-weight:800">CASE ID · JS-24081</div></div>
+          <div class="cta-row"><button class="secondary" onclick="nextStep(1)">Report another issue</button><a href="index.html" class="primary button-link">Return to Home</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function setPane(step){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane'+step).classList.add('active');
+  ['p1','p2','p3'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i<step));
+  if(step===2){
+    const t=document.getElementById('issueText').value.trim();
+    if(t){document.getElementById('translatedText').textContent='English translation preview: '+t}
+  }
+}
+function nextStep(step){setPane(step);window.scrollTo({top:0,behavior:'smooth'});}
+let recording=false;
+function toggleRecord(){
+  recording=!recording;
+  const b=document.getElementById('micBtn'),t=document.getElementById('voiceTitle'),s=document.getElementById('voiceSub');
+  if(recording){b.classList.add('recording');b.textContent='■';t.textContent='Recording…';s.textContent='Tap again to stop';}
+  else{b.classList.remove('recording');b.textContent='●';t.textContent='Recording saved';s.textContent='Voice input ready for processing.';}
+}
+let verifiedUser = false, otpSent = false;
+function openAuth(){ document.getElementById('authOverlay').classList.add('show'); showAuthStep(1); }
+function closeAuth(e){ if(!e || e.target.id==='authOverlay') document.getElementById('authOverlay').classList.remove('show'); }
+function showAuthStep(n){
+  [1,2,3].forEach(i=>document.getElementById('authStep'+i).style.display=i===n?'block':'none');
+  document.getElementById('authError').classList.remove('show'); document.getElementById('otpError').classList.remove('show');
+}
+function sendOTP(){
+  const name=document.getElementById('authName').value.trim(); const phone=document.getElementById('authPhone').value.trim();
+  if(!otpSent){
+    if(name.length<2){return showError('authError','Please enter your full name.');}
+    if(!/^\d{10}$/.test(phone)){return showError('authError','Please enter a valid 10-digit mobile number.');}
+    otpSent=true;
+  }
+  showAuthStep(2); document.getElementById('otpInput').focus();
+}
+function verifyOTP(){
+  const otp=document.getElementById('otpInput').value.trim();
+  if(otp!=='123456') return showError('otpError','Incorrect OTP. Use 123456 for demo.');
+  verifiedUser=true; showAuthStep(3);
+}
+function finishAuth(){
+  document.getElementById('authOverlay').classList.remove('show');
+  document.getElementById('authNav').textContent='✓ Verified'; document.getElementById('authNav').disabled=true;
+  const name=document.getElementById('authName').value.trim() || 'Verified user';
+  document.getElementById('userName').textContent=name; document.getElementById('userPill').classList.add('show');
+  document.getElementById('verifyHint').textContent='Verified as '+name+'.';
+}
+function continueFromReport(){ if(!verifiedUser){ openAuth(); return; } nextStep(2); }
+function showError(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
+</script>
+</body>
+</html>
