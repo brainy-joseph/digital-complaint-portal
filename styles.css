@@ -698,5 +698,42 @@ footer {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+@media (max-width: 650px) {
+  nav a {
+    display: none;
+  }
+  .top {
+    padding: 0 20px;
+  }
+  .hero {
+    padding: 55px 20px 30px;
+  }
+  .section, .report-wrap, .dash {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .hero h1 {
+    font-size: 39px;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+  .report-body {
+    padding: 20px;
+  }
+  .dash-top {
+    align-items: start;
+    flex-direction: column;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .case {
+    grid-template-columns: 1fr;
+  }
+  .hero-card {
+    transform: none;
+  }
+}
 
 
