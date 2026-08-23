@@ -7,10 +7,8 @@
 <link rel="stylesheet" href="styles.css" />
 </head>
 
-
 <script src="translate.js"></script>
 
-  
 <body>
 <header class="top">
   <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
@@ -44,6 +42,13 @@
             <div id="resStatus" style="display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eef5ef; color: var(--green);"></div>
           </div>
           <div style="margin-top: 12px; font-size: 13px; color: var(--muted);" id="resAuth"></div>
+          
+          <!-- NEW: Progress Timeline Section -->
+          <div id="updatesWrapper" style="display: none; margin-top: 15px; border-top: 1px dashed var(--line); padding-top: 15px;">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px;">Progress Timeline:</div>
+            <div id="updatesList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          </div>
+
         </div>
       </div>
 
@@ -57,9 +62,13 @@ function searchComplaint() {
   const query = document.getElementById('trackInput').value.trim().toUpperCase();
   const resultBox = document.getElementById('resultBox');
   const errorBox = document.getElementById('errorBox');
+  const updatesWrapper = document.getElementById('updatesWrapper');
+  const updatesList = document.getElementById('updatesList');
   
   resultBox.style.display = 'none';
   errorBox.classList.remove('show');
+  updatesWrapper.style.display = 'none';
+  updatesList.innerHTML = '';
 
   if(!query) {
     errorBox.textContent = 'Please enter a valid Case ID.';
@@ -76,6 +85,22 @@ function searchComplaint() {
     document.getElementById('resDate').textContent = 'Submitted: ' + found.date;
     document.getElementById('resStatus').textContent = found.status;
     document.getElementById('resAuth').textContent = 'Routed to: ' + found.authority;
+    
+    // NEW: Render the updates if they exist
+    if (found.updates && found.updates.length > 0) {
+      updatesWrapper.style.display = 'block';
+      found.updates.forEach(u => {
+        updatesList.innerHTML += `
+          <div style="border-left: 3px solid var(--green); padding-left: 10px;">
+            <div style="font-size: 12px; font-weight: 700;">${u.stage}</div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 4px;">By: ${u.by} | ${u.date}</div>
+            <div style="font-size: 13px; color: #333;">${u.details}</div>
+            ${u.link ? `<div style="margin-top:4px;"><a href="${u.link}" target="_blank" style="font-size:12px; color:#0284c7; text-decoration:none;">View Attached Document &rarr;</a></div>` : ''}
+          </div>
+        `;
+      });
+    }
+
     resultBox.style.display = 'block';
   } else if(query === 'JS-24081') {
     document.getElementById('resTitle').textContent = 'Sample Demo Case: Waterlogging near campus';
