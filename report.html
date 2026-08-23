@@ -9,7 +9,6 @@
 
 <script src="translate.js"></script>
 
-  
 <body>
 <header class="top">
   <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
@@ -57,6 +56,18 @@
         <div class="pane active" id="pane1">
           <div class="field"><label class="label">Target Authority / Institution</label><select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select></div>
           <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Hindi</option><option>English</option><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option></select></div>
+          
+          <div class="field">
+            <label class="label">Location / Ward / GPS Coordinates</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+              <input id="locationInput" placeholder="Enter Village/Ward or tap button to auto-detect" value="Kanker, District Ward 4" style="flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 8px;" />
+              <button type="button" id="geoBtn" onclick="fetchLocation()" style="padding: 10px 14px; background: var(--green, #2d6a4f); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap;">
+                📍 Get GPS
+              </button>
+            </div>
+            <small id="geoStatus" style="font-size: 12px; display: block; color: var(--muted);"></small>
+          </div>
+
           <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally to dictate your issue.</small></div></div></div>
           
           <div class="field">
@@ -70,12 +81,13 @@
           <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea></div>
           <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
         </div>
+
         <div class="pane" id="pane2">
           <div class="field"><label class="label">Converted English report</label><div class="preview"><strong id="translatedTitle">Issue Summary</strong><span id="translatedText">The main pathway has waterlogging and becomes difficult to use after rain.</span></div></div>
-          <div class="field"><label class="label">Location / Ward / Hostel</label><input placeholder="Village, ward, or department name" value="Kanker, District Ward 4" /></div>
           <div class="field"><label class="label">Category</label><select class="select"><option>Roads & Transport</option><option>Water & Sanitation</option><option>Electricity & Power</option><option>Campus Infrastructure</option></select></div>
           <div class="cta-row"><button class="secondary" onclick="nextStep(1)">Back</button><button class="primary" onclick="nextStep(3)">Submit report</button></div>
         </div>
+
         <div class="pane" id="pane3">
           <div style="text-align:center;padding:35px 15px 25px">
             <div style="font-size:48px">✓</div>
@@ -107,6 +119,35 @@ document.getElementById('imageInput').addEventListener('change', function(event)
   }
 });
 
+function fetchLocation() {
+  const locationInput = document.getElementById('locationInput');
+  const geoStatus = document.getElementById('geoStatus');
+
+  if (!navigator.geolocation) {
+    geoStatus.textContent = "Geolocation is not supported by your browser.";
+    geoStatus.style.color = "red";
+    return;
+  }
+
+  geoStatus.textContent = "Fetching exact GPS location...";
+  geoStatus.style.color = "var(--muted)";
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toFixed(5);
+      const lng = position.coords.longitude.toFixed(5);
+      locationInput.value = `GPS: ${lat}, ${lng}`;
+      geoStatus.textContent = "Exact GPS coordinates captured!";
+      geoStatus.style.color = "green";
+    },
+    (error) => {
+      geoStatus.textContent = "Unable to fetch location. Please allow browser GPS permission.";
+      geoStatus.style.color = "red";
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
 function setPane(step){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane'+step).classList.add('active');
@@ -137,7 +178,7 @@ function saveComplaintToStorage() {
     id: generatedId,
     title: issueText.length > 40 ? issueText.substring(0, 40) + '...' : issueText,
     fullText: issueText,
-    location: document.querySelector('#pane2 input').value || 'Citizen Reported Area',
+    location: document.getElementById('locationInput').value || 'Citizen Reported Area',
     category: document.querySelector('#pane2 select').value,
     priority: 'High priority',
     status: 'Unassigned',
