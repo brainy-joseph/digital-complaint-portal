@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Track Complaint | JantaSetu</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="top">
+  <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
+  <nav><a href="index.html">Home</a><a href="report.html">Citizen Portal</a></nav>
+</header>
+
+<main class="page-container">
+  <div class="auth-card admin-card" style="max-width: 600px;">
+    <div class="auth-head">
+      <h2>Track Your Complaint</h2>
+      <p>Enter your unique Case ID (e.g. JS-24081) to view real-time status and progress.</p>
+    </div>
+    <div class="auth-body">
+      <div class="field">
+        <label class="label">Case ID</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="trackInput" placeholder="e.g. JS-12345" />
+          <button class="primary" onclick="searchComplaint()" style="white-space: nowrap;">Search Status</button>
+        </div>
+      </div>
+      
+      <div id="resultBox" style="margin-top: 25px; display: none;">
+        <div class="preview" style="background: #fbfbf8;">
+          <strong id="resTitle" style="font-size: 16px; margin-bottom: 8px;"></strong>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; color: var(--muted);">
+            <span id="resID"></span>
+            <span id="resDate"></span>
+          </div>
+          <div style="border-top: 1px solid var(--line); padding-top: 12px;">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Current Status:</div>
+            <div id="resStatus" style="display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eef5ef; color: var(--green);"></div>
+          </div>
+          <div style="margin-top: 12px; font-size: 13px; color: var(--muted);" id="resAuth"></div>
+        </div>
+      </div>
+
+      <div id="errorBox" class="auth-error" style="margin-top: 15px;"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+function searchComplaint() {
+  const query = document.getElementById('trackInput').value.trim().toUpperCase();
+  const resultBox = document.getElementById('resultBox');
+  const errorBox = document.getElementById('errorBox');
+  
+  resultBox.style.display = 'none';
+  errorBox.classList.remove('show');
+
+  if(!query) {
+    errorBox.textContent = 'Please enter a valid Case ID.';
+    errorBox.classList.add('show');
+    return;
+  }
+
+  const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  const found = storedReports.find(r => r.id.toUpperCase() === query);
+
+  if(found) {
+    document.getElementById('resTitle').textContent = found.title;
+    document.getElementById('resID').textContent = 'ID: ' + found.id;
+    document.getElementById('resDate').textContent = 'Submitted: ' + found.date;
+    document.getElementById('resStatus').textContent = found.status;
+    document.getElementById('resAuth').textContent = 'Routed to: ' + found.authority;
+    resultBox.style.display = 'block';
+  } else if(query === 'JS-24081') {
+    document.getElementById('resTitle').textContent = 'Sample Demo Case: Waterlogging near campus';
+    document.getElementById('resID').textContent = 'ID: JS-24081';
+    document.getElementById('resDate').textContent = 'Submitted: 2026-08-20';
+    document.getElementById('resStatus').textContent = 'Under Review';
+    document.getElementById('resAuth').textContent = 'Routed to: Local Municipal Body / Panchayat';
+    resultBox.style.display = 'block';
+  } else {
+    errorBox.textContent = 'No complaint found matching this Case ID. Please check and try again.';
+    errorBox.classList.add('show');
+  }
+}
+</script>
+</body>
+</html>
