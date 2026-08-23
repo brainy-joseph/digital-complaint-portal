@@ -3,152 +3,205 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin Login | JantaSetu</title>
+<title>University & Authority Progress Portal | JantaSetu</title>
 <link rel="stylesheet" href="styles.css" />
+<style>
+  .admin-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; margin-top: 20px; }
+  .case-list { background: #fff; border: 1px solid var(--line, #e2e8f0); border-radius: 10px; padding: 15px; max-height: 700px; overflow-y: auto; }
+  .case-card { padding: 12px; border: 1px solid #edf2f7; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+  .case-card:hover, .case-card.active { border-color: #2d6a4f; background: #f4f9f5; }
+  .case-card h4 { margin: 0 0 5px 0; font-size: 14px; }
+  .case-card p { margin: 0; font-size: 12px; color: #666; }
+  .work-panel { background: #fff; border: 1px solid var(--line, #e2e8f0); border-radius: 10px; padding: 25px; }
+  .timeline-history { margin-top: 20px; border-left: 2px solid #2d6a4f; padding-left: 15px; }
+  .history-item { margin-bottom: 15px; position: relative; }
+  .history-item::before { content: '●'; color: #2d6a4f; position: absolute; left: -21px; top: -2px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #e2e8f0; }
+  .tag.in-progress { background: #fef3c7; color: #92400e; }
+  .tag.resolved { background: #d1fae5; color: #065f46; }
+</style>
 </head>
 
-  <script src="translate.js"></script>
-
-  
 <body>
 <header class="top">
   <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
-  <nav><a href="index.html">Home</a><a href="report.html">Citizen Portal</a></nav>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="track.html">Track Portal</a>
+    <span class="user-pill show" style="background:#2d6a4f; color:white;">🎓 University / Authority Workspace</span>
+  </nav>
 </header>
 
-<main class="page-container">
-  <div class="auth-card admin-card">
-    <div class="auth-head">
-      <h2>Authority & Campus Portal Login</h2>
-      <p>Log in to access assigned complaints, pick tasks, and update progress status.</p>
+<main class="page-container" style="max-width: 1100px; margin: 30px auto; padding: 0 15px;">
+  <h2>University R&D & Authority Action Portal</h2>
+  <p style="color:#666; font-size: 14px;">Review assigned societal challenges, post field/lab progress updates, upload research solutions, and update project lifecycle stages.</p>
+
+  <div class="admin-grid">
+    <!-- Left: Case List -->
+    <div class="case-list">
+      <h3 style="font-size: 15px; margin-bottom: 12px;">Assigned Challenges</h3>
+      <div id="caseListContainer"></div>
     </div>
-    <div class="auth-body">
-      <form onsubmit="handleAdminLogin(event)">
-        <div class="field">
-          <label class="label">Organization Type</label>
-          <select class="select" id="orgType" onchange="toggleOrgOptions()">
-            <option value="local_body">Local Government Body / Municipality</option>
-            <option value="university">University / Educational Institute</option>
+
+    <!-- Right: Work Submission Form & History -->
+    <div class="work-panel" id="workPanel" style="display: none;">
+      <div style="display:flex; justify-shadow: space-between; justify-content: space-between; align-items: start;">
+        <div>
+          <span class="tag" id="displayCategory">Water & Sanitation</span>
+          <h3 id="displayTitle" style="margin: 8px 0 4px 0;">Handpump Repair & Water Testing</h3>
+          <small id="displayMeta" style="color: #666;"></small>
+        </div>
+        <span class="tag in-progress" id="displayStatus">In Progress</span>
+      </div>
+
+      <hr style="margin: 20px 0; border: none; border-top: 1px solid #edf2f7;" />
+
+      <!-- Form to submit work done -->
+      <h4>Submit Action / Progress Milestone</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Assigned Team / Lead</label>
+          <input id="updaterName" placeholder="e.g. BIT Mesra Water Lab Team / PWD Dept" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" />
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Update Project Lifecycle Stage</label>
+          <select id="stageSelect" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+            <option value="Under Evaluation">Under University/Dept Evaluation</option>
+            <option value="R&D / Solution Design">R&D / Solution Design Phase</option>
+            <option value="Prototype Testing">Prototype / Field Work In Progress</option>
+            <option value="Resolved / Deployed">Resolved / Solution Deployed</option>
           </select>
         </div>
-        <div class="field">
-          <label class="label">Select Entity</label>
-          <select class="select" id="entityList">
-            <option>Kanker Municipal Council</option>
-            <option>West Singhbhum District Admin</option>
-            <option>Surguja Development Authority</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="label">Official Email / ID</label>
-          <input type="email" placeholder="admin@org.gov.in" required />
-        </div>
-        <div class="field">
-          <label class="label">Password</label>
-          <input type="password" placeholder="••••••••" required />
-        </div>
-        <div class="demo-note">Demo Credentials: Choose any entity and click <b>Access Dashboard</b>.</div>
-        <div class="auth-actions">
-          <button type="submit" class="primary">Access Dashboard &rarr;</button>
-        </div>
-      </form>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Action Taken / Work Done Report</label>
+        <textarea id="workDetails" placeholder="Describe the steps taken (e.g., Conducted water quality testing, fabricated low-cost filtration unit, dispatched maintenance crew)..." style="width: 100%; height: 90px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+      </div>
+
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <input type="text" id="solutionLink" placeholder="Attach Solution Doc / CAD Model / Report URL (Optional)" style="width: 70%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 12px;" />
+        <button onclick="saveProgressUpdate()" style="padding: 9px 16px; background: #2d6a4f; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Post Work Update</button>
+      </div>
+
+      <hr style="margin: 25px 0 15px 0; border: none; border-top: 1px solid #edf2f7;" />
+
+      <h4>Activity & Solution Timeline</h4>
+      <div class="timeline-history" id="timelineHistory"></div>
     </div>
   </div>
-
-  <section class="dashboard" id="adminDashboard" style="display:none;">
-    <div class="dash">
-      <div class="dash-top">
-        <div>
-          <div class="eyebrow">Official Management Board</div>
-          <h2 id="dashTitle">Municipal Case Board</h2>
-          <p class="section-intro">Review reports submitted by citizens, assign tasks, and track resolutions.</p>
-        </div>
-        <button class="secondary">Export Report Logs</button>
-      </div>
-      <div class="stats">
-        <div class="stat"><div class="small">Pending Pick</div><div class="big">14</div><div class="small">Unassigned cases</div></div>
-        <div class="stat"><div class="small">In Progress</div><div class="big">21</div><div class="small">Assigned to staff</div></div>
-        <div class="stat"><div class="small">Resolved This Month</div><div class="big">74</div><div class="small">Verified closed</div></div>
-      </div>
-      <div class="cases">
-        <!-- Cases will load dynamically here -->
-      </div>
-    </div>
-  </section>
 </main>
 
 <script>
-function toggleOrgOptions() {
-  const type = document.getElementById('orgType').value;
-  const select = document.getElementById('entityList');
-  if(type === 'university') {
-    select.innerHTML = '<option>National Institute of Technology Jamshedpur</option><option>Birla Institute of Technology Mesra</option><option>Indian Institute of Technology Dhanbhad</option><option>State Technical University</option>';
-  } else {
-    select.innerHTML = '<option>Kanker Municipal Council</option><option>West Singhbhum District Admin</option><option>Surguja Development Authority</option>';
+let currentCaseId = null;
+
+function loadCases() {
+  const reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  const container = document.getElementById('caseListContainer');
+  container.innerHTML = '';
+
+  if (reports.length === 0) {
+    container.innerHTML = '<p style="font-size:12px; color:#666;">No challenges submitted yet.</p>';
+    return;
+  }
+
+  reports.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = `case-card ${index === 0 ? 'active' : ''}`;
+    card.onclick = () => selectCase(item.id, card);
+    card.innerHTML = `
+      <h4>${item.title}</h4>
+      <p><b>ID:</b> ${item.id} | <b>Loc:</b> ${item.location}</p>
+      <div style="margin-top:5px; display:flex; justify-content:space-between; align-items:center;">
+        <span class="tag">${item.category}</span>
+        <span style="font-size:10px; font-weight:bold; color:#2d6a4f;">${item.status || 'Unassigned'}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  if (reports.length > 0 && !currentCaseId) {
+    selectCase(reports[0].id, container.firstChild);
   }
 }
 
-function handleAdminLogin(e) {
-  e.preventDefault();
-  const entity = document.getElementById('entityList').value;
-  document.getElementById('dashTitle').textContent = entity + ' Case Board';
-  
-  loadAdminCases();
+function selectCase(id, cardEl) {
+  document.querySelectorAll('.case-card').forEach(c => c.classList.remove('active'));
+  if (cardEl) cardEl.classList.add('active');
 
-  document.querySelector('.admin-card').style.display = 'none';
-  document.getElementById('adminDashboard').style.display = 'block';
+  currentCaseId = id;
+  const reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  const item = reports.find(r => r.id === id);
+
+  if (!item) return;
+
+  document.getElementById('workPanel').style.display = 'block';
+  document.getElementById('displayTitle').textContent = item.title;
+  document.getElementById('displayCategory').textContent = item.category;
+  document.getElementById('displayStatus').textContent = item.status || 'Unassigned';
+  document.getElementById('displayMeta').textContent = `Case ID: ${item.id} | Reported on: ${item.date || 'Recent'} | Authority: ${item.authority || 'Local Panchayat'}`;
+
+  renderTimeline(item.updates || []);
 }
 
-function loadAdminCases() {
-  const casesContainer = document.querySelector('.cases');
-  const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  let allCasesHTML = '';
+function renderTimeline(updates) {
+  const container = document.getElementById('timelineHistory');
+  container.innerHTML = '';
 
-  // Render user submitted reports from localStorage
-  storedReports.forEach((rep, index) => {
-    const isAssigned = rep.status === 'Assigned';
-    const btnHTML = isAssigned 
-      ? `<button class="primary" style="padding: 6px 12px; font-size: 12px;">Assigned to You</button>`
-      : `<button class="secondary" onclick="claimCase(${index})">Pick Task</button>`;
+  if (!updates || updates.length === 0) {
+    container.innerHTML = '<p style="font-size:12px; color:#888;">No work updates logged yet for this problem.</p>';
+    return;
+  }
 
-    allCasesHTML += `
-      <div class="case" style="border-left: 4px solid var(--green);">
-        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (${rep.id})</small></div>
-        <div class="priority">${rep.priority}</div>
-        <div class="status">${rep.status}</div>
-        ${btnHTML}
-      </div>
+  updates.forEach(u => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+      <div style="font-size: 13px; font-weight: bold;">${u.stage} <span style="font-weight:normal; font-size:11px; color:#666;">by ${u.by} on ${u.date}</span></div>
+      <div style="font-size: 12px; margin-top: 3px; color: #333;">${u.details}</div>
+      ${u.link ? `<a href="${u.link}" target="_blank" style="font-size:11px; color:#2d6a4f; text-decoration:underline;">View Attached Solution / Report Document</a>` : ''}
     `;
+    container.appendChild(div);
   });
-
-  // Render static mock cases
-  const defaultCases = [
-    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned' },
-    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review' }
-  ];
-
-  defaultCases.forEach(c => {
-    allCasesHTML += `
-      <div class="case">
-        <div><strong>${c.title}</strong><small>${c.location}</small></div>
-        <div class="priority">${c.priority}</div>
-        <div class="status">${c.status}</div>
-        <button class="secondary" onclick="this.className='primary'; this.style.padding='6px 12px'; this.style.fontSize='12px'; this.textContent='Assigned to You'; this.previousElementSibling.textContent='Assigned';">Pick Task</button>
-      </div>
-    `;
-  });
-
-  casesContainer.innerHTML = allCasesHTML;
 }
 
-function claimCase(index) {
-  let storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  if(storedReports[index]) {
-    storedReports[index].status = 'Assigned';
-    localStorage.setItem('jantaSetuReports', JSON.stringify(storedReports));
-    loadAdminCases(); // Reload list to reflect the updated state instantly
+function saveProgressUpdate() {
+  const by = document.getElementById('updaterName').value.trim() || 'University R&D Cell';
+  const stage = document.getElementById('stageSelect').value;
+  const details = document.getElementById('workDetails').value.trim();
+  const link = document.getElementById('solutionLink').value.trim();
+
+  if (!details) {
+    alert('Please enter details of the work done.');
+    return;
+  }
+
+  let reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  const index = reports.findIndex(r => r.id === currentCaseId);
+
+  if (index !== -1) {
+    if (!reports[index].updates) reports[index].updates = [];
+    
+    reports[index].updates.unshift({
+      by: by,
+      stage: stage,
+      details: details,
+      link: link,
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+    });
+
+    reports[index].status = stage;
+    localStorage.setItem('jantaSetuReports', JSON.stringify(reports));
+
+    document.getElementById('workDetails').value = '';
+    document.getElementById('solutionLink').value = '';
+    
+    loadCases();
+    selectCase(currentCaseId);
   }
 }
+
+window.onload = loadCases;
 </script>
 </body>
 </html>
