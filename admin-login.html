@@ -175,7 +175,16 @@ function loadAdminCases() {
 function claimCase(index) {
   let storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
   if(storedReports[index]) {
+    // Grab the name of the entity that just logged in from the dropdown
+    const currentEntity = document.getElementById('entityList').value;
+    
+    // Update the status
     storedReports[index].status = 'Assigned';
+    
+    // THE FIX: Transfer ownership of the complaint to the logged-in entity
+    storedReports[index].authority = currentEntity; 
+    
+    // Save it back to local storage
     localStorage.setItem('jantaSetuReports', JSON.stringify(storedReports));
     loadAdminCases(); // Reload list to reflect the updated state instantly
   }
