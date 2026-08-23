@@ -5,6 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Report an Issue | JantaSetu</title>
 <link rel="stylesheet" href="styles.css" />
+<style>
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tts-btn {
+    background: #f0f2f5;
+    border: 1px solid #dcdfe4;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+  }
+  .tts-btn:hover {
+    background: #e2e6ea;
+    transform: scale(1.08);
+  }
+  .tts-btn svg {
+    width: 13px;
+    height: 13px;
+    fill: #2d6a4f;
+  }
+</style>
 </head>
 
 <script src="translate.js"></script>
@@ -54,11 +84,34 @@
       <div class="report-body">
         <div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
         <div class="pane active" id="pane1">
-          <div class="field"><label class="label">Target Authority / Institution</label><select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select></div>
-          <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Hindi</option><option>English</option><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option></select></div>
           
           <div class="field">
-            <label class="label">Location / Ward / GPS Coordinates</label>
+            <label class="label">
+              Target Authority / Institution
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiAuthority', 'enAuthority')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
+            <select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select>
+          </div>
+
+          <div class="field">
+            <label class="label">
+              Your language
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiLang', 'enLang')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
+            <select class="select" id="lang"><option>Hindi</option><option>English</option><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option></select>
+          </div>
+          
+          <div class="field">
+            <label class="label">
+              Location / Ward / GPS Coordinates
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiLoc', 'enLoc')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
             <div style="display: flex; gap: 8px; margin-bottom: 4px;">
               <input id="locationInput" placeholder="Enter Village/Ward or tap button to auto-detect" value="Kanker, District Ward 4" style="flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 8px;" />
               <button type="button" id="geoBtn" onclick="fetchLocation()" style="padding: 10px 14px; background: var(--green, #2d6a4f); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap;">
@@ -68,17 +121,38 @@
             <small id="geoStatus" style="font-size: 12px; display: block; color: var(--muted);"></small>
           </div>
 
-          <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally to dictate your issue.</small></div></div></div>
+          <div class="field">
+            <label class="label">
+              How would you like to report?
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiVoice', 'enVoice')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
+            <div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally to dictate your issue.</small></div></div>
+          </div>
           
           <div class="field">
-            <label class="label">Attach Photo Evidence (Optional)</label>
+            <label class="label">
+              Attach Photo Evidence (Optional)
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiPhoto', 'enPhoto')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
             <input type="file" id="imageInput" accept="image/*" style="padding: 8px; border: 1px dashed var(--line); border-radius: 8px; width: 100%; background: #fafaf8; cursor: pointer;" />
             <div id="imagePreviewContainer" style="margin-top: 10px; display: none;">
               <img id="imagePreview" src="" alt="Preview" style="max-height: 100px; border-radius: 6px; border: 1px solid var(--line);" />
             </div>
           </div>
 
-          <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea></div>
+          <div class="field">
+            <label class="label">
+              Or type the issue
+              <button type="button" class="tts-btn" title="Listen instructions" onclick="speakField('hiType', 'enType')">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              </button>
+            </label>
+            <textarea id="issueText" placeholder="Example: Water logging near the library building..."></textarea>
+          </div>
           <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
         </div>
 
@@ -115,6 +189,33 @@
 </main>
 
 <script>
+const audioGuideText = {
+  hiAuthority: "संबंधित विभाग या प्राधिकरण का चयन करें।",
+  enAuthority: "Select the concerned department or authority.",
+  hiLang: "अपनी भाषा चुनें जिसमें आप अपनी शिकायत दर्ज करना चाहते हैं।",
+  enLang: "Choose your preferred language for submitting the issue.",
+  hiLoc: "अपने गाँव, वार्ड का नाम लिखें या जीपीएस बटन दबाकर लोकेशन दर्ज करें।",
+  enLoc: "Enter your village or ward name, or tap Get GPS to capture your location.",
+  hiVoice: "माइक बटन दबाएं और अपनी समस्या बोलकर दर्ज करें।",
+  enVoice: "Tap the mic button and speak clearly to record your problem.",
+  hiPhoto: "यदि समस्या की फोटो उपलब्ध है तो यहाँ अपलोड करें।",
+  enPhoto: "Upload a picture of the issue if available.",
+  hiType: "यहाँ अपनी समस्या का विवरण टाइप करें।",
+  enType: "Type the details of your issue here."
+};
+
+function speakField(hiKey, enKey) {
+  window.speechSynthesis.cancel();
+  const selectedLang = document.getElementById('lang').value;
+  const isHindiMode = ['Hindi', 'Gondi', 'Sadri', 'Chhattisgarhi'].includes(selectedLang);
+  
+  const textToSpeak = isHindiMode ? audioGuideText[hiKey] : audioGuideText[enKey];
+  const msg = new SpeechSynthesisUtterance(textToSpeak);
+  msg.lang = isHindiMode ? 'hi-IN' : 'en-US';
+  msg.rate = 0.95;
+  window.speechSynthesis.speak(msg);
+}
+
 let uploadedImageData = '';
 
 document.getElementById('imageInput').addEventListener('change', function(event) {
