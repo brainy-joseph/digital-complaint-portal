@@ -28,6 +28,16 @@
     <div class="eyebrow">A bridge between communities & action in Jharkhand</div>
     <h1>Say it in your language. Get it heard.</h1>
     <p>JantaSetu lets people report local civic problems through voice or text in their own language. The platform converts the report into a clear, actionable case for the right authority or NGO.</p>
+
+    <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+      <button type="button" class="secondary" onclick="speakGuide('hi')" style="padding: 6px 12px; font-size: 13px; cursor: pointer;">
+        🔊 Listen Instructions (Hindi)
+      </button>
+      <button type="button" class="secondary" onclick="speakGuide('en')" style="padding: 6px 12px; font-size: 13px; cursor: pointer;">
+        🔊 Listen Instructions (English)
+      </button>
+    </div>
+
     <div class="actions">
       <button class="primary" onclick="window.location.href='report.html'">Report a problem</button>
       <button class="secondary" onclick="window.location.href='track.html'">Track Complaint</button>
@@ -128,6 +138,16 @@
 <footer><span>JantaSetu · SIH prototype</span><span>Built for communities, designed for action.</span></footer>
 
 <script>
+function speakGuide(lang) {
+  window.speechSynthesis.cancel();
+  const textHindi = "अपनी शिकायत दर्ज करने के लिए, रिपोर्ट पेज पर जाएँ, शीर्षक लिखें, स्थान चुनें और विवरण भरकर सबमिट बटन दबाएं।";
+  const textEnglish = "To submit your complaint, go to the report page, enter the title, select your location, describe the issue, and click submit.";
+  const message = new SpeechSynthesisUtterance(lang === 'hi' ? textHindi : textEnglish);
+  message.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
+  message.rate = 0.9;
+  window.speechSynthesis.speak(message);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   const map = L.map('districtMap', { zoomControl: false }).setView([23.6102, 85.2799], 8);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
@@ -146,9 +166,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-
-
-
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
@@ -160,8 +177,6 @@ function googleTranslateElementInit() {
 }
 </script>
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-  
 
 </body>
 </html>
