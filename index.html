@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JantaSetu | Community Issue Reporting</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="mark"></div>JantaSetu</div>
+  <nav><a href="#how">How it works</a><a href="#report">Report an issue</a><a href="#dashboard">Authority view</a><span class="user-pill" id="userPill">✓ <span id="userName">Verified user</span></span><button class="navbtn" id="authNav" onclick="openAuth()">Verify & report</button></nav>
+</header>
+
+<div class="auth-overlay" id="authOverlay" onclick="closeAuth(event)">
+  <div class="auth-card" onclick="event.stopPropagation()">
+    <div class="auth-head"><h2>Verify your identity</h2><p>One simple verification step before submitting a public complaint. We only use your details to establish a trusted case record.</p></div>
+    <div class="auth-body">
+      <div class="auth-badge">MOBILE OTP VERIFICATION</div>
+      <div id="authStep1">
+        <div class="profile-grid">
+          <div class="field"><label class="label">Full name <span class="required">*</span></label><input id="authName" placeholder="Enter your name" /></div>
+          <div class="field"><label class="label">Village / district</label><input id="authLocation" placeholder="e.g. Kanker, Chhattisgarh" /></div>
+          <div class="field full"><label class="label">Mobile number <span class="required">*</span></label><input id="authPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" /></div>
+        </div>
+        <div class="lock-note">Your mobile number is used for verification and complaint follow-up. Do not expose sensitive ID numbers in the public complaint.</div>
+        <div class="auth-error" id="authError"></div>
+        <div class="auth-actions"><button class="secondary" onclick="closeAuth()">Cancel</button><button class="primary" onclick="sendOTP()">Send OTP</button></div>
+      </div>
+      <div id="authStep2" style="display:none">
+        <div class="field"><label class="label">Enter the 6-digit OTP</label><div class="verify-row"><input class="otp" id="otpInput" inputmode="numeric" maxlength="6" placeholder="••••••" /><button class="secondary" onclick="sendOTP()">Resend OTP</button></div></div>
+        <div class="demo-note">Hackathon demo mode: use <b>123456</b> as the OTP. In the final product this connects to an SMS/OTP provider.</div>
+        <div class="auth-error" id="otpError"></div>
+        <div class="auth-actions"><button class="secondary" onclick="showAuthStep(1)">Back</button><button class="primary" onclick="verifyOTP()">Verify identity</button></div>
+      </div>
+      <div id="authStep3" style="display:none">
+        <div class="verified-box show">✓ Identity verified successfully. You can now submit a complaint linked to this verified profile.</div>
+        <div class="auth-actions"><button class="primary" onclick="finishAuth()">Continue to report issue</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">A bridge between communities & action</div>
+    <h1>Say it in your language. Get it heard.</h1>
+    <p>JantaSetu lets people report local civic problems through voice or text in their own language. The platform converts the report into a clear, actionable case for the right authority or NGO.</p>
+    <div class="actions"><button class="primary" onclick="scrollToId('report')">Report a problem</button><button class="secondary" onclick="scrollToId('how')">See how it works</button></div>
+  </div>
+  <div class="hero-card">
+    <div class="card-head"><div><b>Recent community reports</b><div class="small">Live case board · sample data</div></div><span class="tag">Open</span></div>
+    <div class="issue"><div class="issue-top"><b>Road damage</b><span class="tag">Roads</span></div><p>“Our road near the weekly market has deep potholes. Two-wheelers are slipping after rain.”</p><div class="meta">Kanker · CG <span>•</span> Translated from Gondi</div></div>
+    <div class="issue"><div class="issue-top"><b>Street waterlogging</b><span class="tag">Drainage</span></div><p>“Water stays near the school entrance for several days.”</p><div class="meta">West Singhbhum · JH <span>•</span> Translated from Ho</div></div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="eyebrow">Simple by design</div><h2>One report. The right people. Faster action.</h2><p class="section-intro">The interface is intentionally simple so someone with limited digital experience can report an issue without navigating a complicated form.</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>Speak or type</h3><p>Choose your language and describe the issue using voice or text.</p></div>
+    <div class="step"><div class="num">2</div><h3>Understand</h3><p>Speech is converted to text, then translated into a standard language for processing.</p></div>
+    <div class="step"><div class="num">3</div><h3>Route</h3><p>The case is categorised and matched to a relevant department or support organisation.</p></div>
+    <div class="step"><div class="num">4</div><h3>Track</h3><p>Authorities and NGOs can review, update status and follow the case to closure.</p></div>
+  </div>
+</section>
+
+<div class="report-wrap" id="report">
+  <div class="report">
+    <div class="report-banner"><h2>Report an issue</h2><p>Verified reporting keeps cases trusted while keeping the complaint process simple.</p></div>
+    <div class="report-body">
+      <div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
+      <div class="pane active" id="pane1">
+        <div class="field"><label class="label">Your language</label><select class="select" id="lang"><option>Gondi</option><option>Ho</option><option>Kurukh</option><option>Sadri</option><option>Chhattisgarhi</option><option>Hindi</option><option>Other</option></select></div>
+        <div class="field"><label class="label">How would you like to report?</label><div class="voice"><button class="mic" id="micBtn" onclick="toggleRecord()">●</button><div><b id="voiceTitle">Tap to start recording</b><small id="voiceSub">Speak naturally for up to 60 seconds.</small></div></div></div>
+        <div class="field"><label class="label">Or type the issue</label><textarea id="issueText" placeholder="Example: The main road has large potholes near the school..."></textarea></div>
+        <div class="cta-row"><span class="small" id="verifyHint">Identity verification is required before submission.</span><button class="primary" onclick="continueFromReport()">Continue</button></div>
+      </div>
+      <div class="pane" id="pane2">
+        <div class="field"><label class="label">Converted English report</label><div class="preview"><strong id="translatedTitle">Road damage near school</strong><span id="translatedText">The main road has large potholes near the school and becomes difficult to use after rain.</span></div></div>
+        <div class="field"><label class="label">Location</label><input placeholder="Village / block / district" value="Kanker, Chhattisgarh" /></div>
+        <div class="field"><label class="label">Category</label><select class="select"><option>Roads & transport</option><option>Water & sanitation</option><option>Electricity</option><option>Health</option><option>Education</option><option>Other</option></select></div>
+        <div class="cta-row"><button class="secondary" onclick="nextStep(1)">Back</button><button class="primary" onclick="nextStep(3)">Submit report</button></div>
+      </div>
+      <div class="pane" id="pane3">
+        <div style="text-align:center;padding:35px 15px 25px"><div style="font-size:48px">✓</div><h3 style="font-size:25px;margin:10px 0 8px">Report submitted</h3><p style="color:var(--muted);line-height:1.6;max-width:520px;margin:0 auto">Your issue has been converted into a standard case and added to the community board. Relevant authorities and partner NGOs can now review it.</p><div style="display:inline-block;margin-top:18px;padding:9px 12px;border-radius:999px;background:#eef5ef;color:var(--green);font-size:12px;font-weight:800">CASE ID · JS-24081</div></div>
+        <div class="cta-row"><button class="secondary" onclick="nextStep(1)">Report another issue</button><button class="primary" onclick="scrollToId('dashboard')">View authority dashboard</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="dashboard" id="dashboard">
+  <div class="dash">
+    <div class="dash-top"><div><div class="eyebrow">Demo dashboard</div><h2>Authority & NGO view</h2><p class="section-intro">A single place to see what communities are reporting, prioritise cases and track progress.</p></div><button class="secondary">Export cases</button></div>
+    <div class="stats"><div class="stat"><div class="small">Open cases</div><div class="big">128</div><div class="small">Across 6 districts</div></div><div class="stat"><div class="small">Needs attention</div><div class="big">21</div><div class="small">Marked high priority</div></div><div class="stat"><div class="small">Resolved this month</div><div class="big">74</div><div class="small">Community-verified</div></div></div>
+    <div class="cases">
+      <div class="case"><div><strong>Large potholes near weekly market</strong><small>Kanker, Chhattisgarh · Gondi</small></div><div class="priority hide-m">High priority</div><div class="status">Assigned</div><div class="small hide-m">Road Dept.</div></div>
+      <div class="case"><div><strong>Waterlogging at school entrance</strong><small>West Singhbhum, Jharkhand · Ho</small></div><div class="priority hide-m">Medium</div><div class="status">Under review</div><div class="small hide-m">District Admin</div></div>
+      <div class="case"><div><strong>Transformer not working for 5 days</strong><small>Latehar, Jharkhand · Kurukh</small></div><div class="priority hide-m">High priority</div><div class="status">New</div><div class="small hide-m">Electricity Dept.</div></div>
+      <div class="case"><div><strong>Broken handpump near anganwadi</strong><small>Surguja, Chhattisgarh · Chhattisgarhi</small></div><div class="priority hide-m">Medium</div><div class="status">Assigned</div><div class="small hide-m">Rural Water</div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><span>JantaSetu · SIH prototype</span><span>Built for communities, designed for action.</span></footer>
+
+<script>
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function setPane(step){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  
