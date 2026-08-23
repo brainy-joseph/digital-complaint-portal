@@ -5,260 +5,232 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Admin Login | JantaSetu</title>
 <link rel="stylesheet" href="styles.css" />
-<style>
-  /* Base styles to ensure it works even without styles.css */
-  body { font-family: system-ui, sans-serif; background: #f8fafc; margin: 0; }
-  .page-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
-  .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 500px; margin: auto; }
-  .field { margin-bottom: 15px; }
-  .field label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-  .field input, .field select, .field textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-  button.primary { background: #2d6a4f; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  button.secondary { background: #e2e8f0; color: #1e293b; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-  .stats { display: flex; gap: 20px; margin-bottom: 20px; }
-  .stat { background: white; padding: 20px; border-radius: 8px; flex: 1; border: 1px solid #e2e8f0; text-align: center; }
-  .stat .big { font-size: 32px; font-weight: bold; color: #2d6a4f; margin: 10px 0; }
-  .case { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-  
-  /* Modal Styles for Work Update */
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
-  .modal-content { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 600px; }
-  .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
-</style>
 </head>
-<body>
 
-<header style="background: white; padding: 15px 30px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-  <a href="index.html" style="text-decoration: none; font-weight: bold; color: #2d6a4f; font-size: 20px;">JantaSetu</a>
-  <nav><a href="index.html" style="margin-right: 15px; text-decoration: none; color: #333;">Home</a><a href="report.html" style="text-decoration: none; color: #333;">Citizen Portal</a></nav>
+  <script src="translate.js"></script>
+
+  
+<body>
+<header class="top">
+  <a href="index.html" class="brand" style="text-decoration: none; color: inherit;"><div class="mark"></div>JantaSetu</a>
+  <nav><a href="index.html">Home</a><a href="report.html">Citizen Portal</a></nav>
 </header>
 
 <main class="page-container">
-  <!-- AUTHENTICATION CARD -->
-  <div class="auth-card admin-card" id="loginCard">
-    <div class="auth-head" style="margin-bottom: 20px; text-align: center;">
-      <h2 style="margin-bottom: 5px;">Authority & Campus Portal</h2>
-      <p style="color: #64748b; font-size: 14px;">Log in to access assigned challenges, pick tasks, and update progress.</p>
+  <div class="auth-card admin-card">
+    <div class="auth-head">
+      <h2>Authority & Campus Portal Login</h2>
+      <p>Log in to access assigned complaints, pick tasks, and update progress status.</p>
     </div>
     <div class="auth-body">
       <form onsubmit="handleAdminLogin(event)">
         <div class="field">
-          <label>Organization Type</label>
-          <select id="orgType" onchange="toggleOrgOptions()">
+          <label class="label">Organization Type</label>
+          <select class="select" id="orgType" onchange="toggleOrgOptions()">
             <option value="local_body">Local Government Body / Municipality</option>
             <option value="university">University / Educational Institute</option>
           </select>
         </div>
         <div class="field">
-          <label>Select Entity</label>
-          <select id="entityList">
+          <label class="label">Select Entity</label>
+          <select class="select" id="entityList">
             <option>Kanker Municipal Council</option>
             <option>West Singhbhum District Admin</option>
             <option>Surguja Development Authority</option>
           </select>
         </div>
         <div class="field">
-          <label>Official Email / ID</label>
+          <label class="label">Official Email / ID</label>
           <input type="email" placeholder="admin@org.gov.in" required />
         </div>
         <div class="field">
-          <label>Password</label>
+          <label class="label">Password</label>
           <input type="password" placeholder="••••••••" required />
         </div>
-        <button type="submit" class="primary" style="width: 100%; margin-top: 10px;">Access Dashboard &rarr;</button>
+        <div class="demo-note">Demo Credentials: Choose any entity and click <b>Access Dashboard</b>.</div>
+        <div class="auth-actions">
+          <button type="submit" class="primary">Access Dashboard &rarr;</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <section class="dashboard" id="adminDashboard" style="display:none;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <div>
-        <h2 id="dashTitle" style="margin: 0;">Case Board</h2>
-        <p style="color: #64748b; margin-top: 5px;">Review challenges, assign tasks, and track solutions.</p>
+    <div class="dash">
+      <div class="dash-top">
+        <div>
+          <div class="eyebrow">Official Management Board</div>
+          <h2 id="dashTitle">Municipal Case Board</h2>
+          <p class="section-intro">Review reports submitted by citizens, assign tasks, and track resolutions.</p>
+        </div>
+        <button class="secondary">Export Report Logs</button>
       </div>
-    </div>
-    
-    <div class="stats">
-      <div class="stat"><div class="small">Pending Pick</div><div class="big" id="statPending">0</div></div>
-      <div class="stat"><div class="small">In Progress</div><div class="big" id="statProgress">0</div></div>
-      <div class="stat"><div class="small">Resolved</div><div class="big" id="statResolved">0</div></div>
-    </div>
-    
-    <div class="cases" id="casesContainer">
-      <!-- Cases load dynamically here -->
+      <div class="stats">
+        <div class="stat"><div class="small">Pending Pick</div><div class="big">14</div><div class="small">Unassigned cases</div></div>
+        <div class="stat"><div class="small">In Progress</div><div class="big">21</div><div class="small">Assigned to staff</div></div>
+        <div class="stat"><div class="small">Resolved This Month</div><div class="big">74</div><div class="small">Verified closed</div></div>
+      </div>
+      <div class="cases">
+        <!-- Cases will load dynamically here -->
+      </div>
     </div>
   </section>
 </main>
 
-<!-- UPDATE PROGRESS MODAL -->
-<div class="modal-overlay" id="updateModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 style="margin: 0;" id="modalTitle">Update Project Status</h3>
-      <button onclick="closeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-    </div>
-    
+<!-- NEW: UPDATE PROGRESS MODAL (Hidden by default) -->
+<div id="updateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:white; padding:25px; border-radius:12px; width:90%; max-width:500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+    <h3 style="margin-top:0; margin-bottom:15px;">Update Project Status</h3>
     <div class="field">
-      <label>Update Lifecycle Stage</label>
-      <select id="stageSelect">
+      <label class="label">Update Lifecycle Stage</label>
+      <select class="select" id="stageSelect" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
         <option value="R&D / Solution Design">R&D / Solution Design Phase</option>
         <option value="Prototype Testing">Prototype / Field Work In Progress</option>
         <option value="Resolved / Deployed">Resolved / Solution Deployed</option>
       </select>
     </div>
-    
-    <div class="field">
-      <label>Action Taken / Work Done Report</label>
-      <textarea id="workDetails" placeholder="Describe the R&D progress or field action taken..." rows="4"></textarea>
+    <div class="field" style="margin-top:15px;">
+      <label class="label">Action Taken / Work Done Report</label>
+      <textarea id="workDetails" placeholder="Describe the R&D progress or field action taken..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; font-family:inherit;" rows="4"></textarea>
     </div>
-    
-    <div class="field">
-      <label>Solution Link / Doc (Optional)</label>
-      <input type="text" id="solutionLink" placeholder="URL to CAD file, research paper, or photo" />
+    <div class="field" style="margin-top:15px;">
+      <label class="label">Solution Link / Doc (Optional)</label>
+      <input type="text" id="solutionLink" placeholder="URL to CAD file, research paper, or photo" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;" />
     </div>
-    
-    <button class="primary" onclick="submitProgressUpdate()" style="width: 100%;">Save Update</button>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="primary" onclick="submitProgressUpdate()" style="flex:1;">Save Update</button>
+      <button class="secondary" onclick="closeUpdateModal()" style="flex:1;">Cancel</button>
+    </div>
   </div>
 </div>
 
 <script>
-let currentActiveId = null;
-let currentEntity = 'Admin';
+let currentActiveIndex = null;
 
 function toggleOrgOptions() {
   const type = document.getElementById('orgType').value;
   const select = document.getElementById('entityList');
   if(type === 'university') {
-    select.innerHTML = '<option>National Institute of Technology Jamshedpur</option><option>Birla Institute of Technology Mesra</option><option>IIT Dhanbad</option>';
+    select.innerHTML = '<option>National Institute of Technology Jamshedpur</option><option>Birla Institute of Technology Mesra</option><option>Indian Institute of Technology Dhanbhad</option><option>State Technical University</option>';
   } else {
-    select.innerHTML = '<option>Kanker Municipal Council</option><option>West Singhbhum District Admin</option>';
+    select.innerHTML = '<option>Kanker Municipal Council</option><option>West Singhbhum District Admin</option><option>Surguja Development Authority</option>';
   }
 }
 
 function handleAdminLogin(e) {
   e.preventDefault();
-  currentEntity = document.getElementById('entityList').value;
-  document.getElementById('dashTitle').textContent = currentEntity + ' Dashboard';
-  
-  document.getElementById('loginCard').style.display = 'none';
-  document.getElementById('adminDashboard').style.display = 'block';
+  const entity = document.getElementById('entityList').value;
+  document.getElementById('dashTitle').textContent = entity + ' Case Board';
   
   loadAdminCases();
+
+  document.querySelector('.admin-card').style.display = 'none';
+  document.getElementById('adminDashboard').style.display = 'block';
 }
 
 function loadAdminCases() {
-  const container = document.getElementById('casesContainer');
-  let reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  
-  let pendingCount = 0;
-  let progressCount = 0;
-  let resolvedCount = 0;
-  
-  container.innerHTML = '';
-  
-  if (reports.length === 0) {
-    container.innerHTML = '<p style="color:#666;">No challenges have been reported yet.</p>';
-  }
+  const casesContainer = document.querySelector('.cases');
+  const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  let allCasesHTML = '';
 
-  reports.forEach(rep => {
-    let currentStatus = rep.status || 'Unassigned';
-    
-    if (currentStatus === 'Unassigned' || currentStatus === 'Under Review') pendingCount++;
-    else if (currentStatus.includes('Resolved')) resolvedCount++;
-    else progressCount++;
-
-    const isAssigned = (currentStatus !== 'Unassigned' && currentStatus !== 'Under Review');
+  // Render user submitted reports from localStorage
+  storedReports.forEach((rep, index) => {
+    // Check if the case is picked up. If picked, show "Update Progress" instead of a static button.
+    const isAssigned = rep.status && rep.status !== 'Unassigned' && rep.status !== 'Under review';
     
     const btnHTML = isAssigned 
-      ? `<button class="primary" onclick="openModal('${rep.id}')" style="background:#0284c7;">Update Progress</button>`
-      : `<button class="secondary" onclick="claimCase('${rep.id}')">Pick Task</button>`;
+      ? `<button class="primary" style="padding: 6px 12px; font-size: 12px; background: #0284c7; border: none;" onclick="openUpdateModal(${index})">Update Progress</button>`
+      : `<button class="secondary" onclick="claimCase(${index})">Pick Task</button>`;
 
-    container.innerHTML += `
-      <div class="case" style="border-left: 4px solid ${isAssigned ? '#0284c7' : '#eab308'};">
-        <div style="flex:1;">
-          <div style="font-weight: 600; margin-bottom: 4px;">${rep.title}</div>
-          <div style="font-size: 12px; color: #64748b;">${rep.location} · ID: ${rep.id}</div>
-        </div>
-        <div style="padding: 4px 10px; background: #f1f5f9; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 15px;">
-          ${currentStatus}
-        </div>
+    allCasesHTML += `
+      <div class="case" style="border-left: 4px solid var(--green);">
+        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (${rep.id})</small></div>
+        <div class="priority">${rep.priority || 'High'}</div>
+        <div class="status">${rep.status || 'Unassigned'}</div>
         ${btnHTML}
       </div>
     `;
   });
 
-  // Update Stats Board
-  document.getElementById('statPending').textContent = pendingCount;
-  document.getElementById('statProgress').textContent = progressCount;
-  document.getElementById('statResolved').textContent = resolvedCount;
+  // Render static mock cases
+  const defaultCases = [
+    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned' },
+    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review' }
+  ];
+
+  defaultCases.forEach(c => {
+    allCasesHTML += `
+      <div class="case">
+        <div><strong>${c.title}</strong><small>${c.location}</small></div>
+        <div class="priority">${c.priority}</div>
+        <div class="status">${c.status}</div>
+        <button class="secondary" onclick="this.className='primary'; this.style.padding='6px 12px'; this.style.fontSize='12px'; this.style.background='#0284c7'; this.style.border='none'; this.textContent='Update Progress'; this.previousElementSibling.textContent='Assigned';">Pick Task</button>
+      </div>
+    `;
+  });
+
+  casesContainer.innerHTML = allCasesHTML;
 }
 
-function claimCase(id) {
-  let reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  const index = reports.findIndex(r => r.id === id);
-  
-  if (index !== -1) {
-    reports[index].status = 'Assigned to ' + currentEntity;
-    
-    // Add first auto-update
-    if (!reports[index].updates) reports[index].updates = [];
-    reports[index].updates.unshift({
-      by: currentEntity,
-      stage: 'Task Claimed',
-      details: `This challenge was formally picked up by ${currentEntity} for evaluation.`,
-      date: new Date().toLocaleDateString()
-    });
-
-    localStorage.setItem('jantaSetuReports', JSON.stringify(reports));
-    loadAdminCases();
+function claimCase(index) {
+  let storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  if(storedReports[index]) {
+    storedReports[index].status = 'Assigned';
+    localStorage.setItem('jantaSetuReports', JSON.stringify(storedReports));
+    loadAdminCases(); // Reload list to reflect the updated state instantly
   }
 }
 
-function openModal(id) {
-  currentActiveId = id;
+// NEW MODAL FUNCTIONS
+function openUpdateModal(index) {
+  currentActiveIndex = index;
   document.getElementById('updateModal').style.display = 'flex';
 }
 
-function closeModal() {
+function closeUpdateModal() {
   document.getElementById('updateModal').style.display = 'none';
-  currentActiveId = null;
+  currentActiveIndex = null;
   document.getElementById('workDetails').value = '';
   document.getElementById('solutionLink').value = '';
 }
 
 function submitProgressUpdate() {
-  if (!currentActiveId) return;
+  if (currentActiveIndex === null) return;
   
   const stage = document.getElementById('stageSelect').value;
   const details = document.getElementById('workDetails').value.trim();
   const link = document.getElementById('solutionLink').value.trim();
 
   if (!details) {
-    alert('Please describe the work done.');
+    alert('Please provide details of the work done.');
     return;
   }
 
   let reports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
-  const index = reports.findIndex(r => r.id === currentActiveId);
-
-  if (index !== -1) {
-    if (!reports[index].updates) reports[index].updates = [];
-    
-    reports[index].updates.unshift({
-      by: currentEntity,
-      stage: stage,
-      details: details,
-      link: link,
-      date: new Date().toLocaleDateString()
-    });
-
-    reports[index].status = stage;
-    localStorage.setItem('jantaSetuReports', JSON.stringify(reports));
-    
-    closeModal();
-    loadAdminCases();
+  
+  // Ensure the updates array exists
+  if (!reports[currentActiveIndex].updates) {
+    reports[currentActiveIndex].updates = [];
   }
+  
+  // Fetch logged in entity name
+  const entity = document.getElementById('entityList').value || 'University / Authority';
+  
+  // Push the new update payload for track.html to read
+  reports[currentActiveIndex].updates.unshift({
+    by: entity,
+    stage: stage,
+    details: details,
+    link: link,
+    date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+  });
+
+  // Update status and save
+  reports[currentActiveIndex].status = stage;
+  localStorage.setItem('jantaSetuReports', JSON.stringify(reports));
+  
+  closeUpdateModal();
+  loadAdminCases();
 }
 </script>
 </body>
