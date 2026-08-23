@@ -215,10 +215,18 @@ function speakField(hiKey, enKey) {
 
   if (isHindiMode) {
     msg.lang = 'hi-IN';
+    // Finds explicit female Hindi voices across Windows (Heera), Android/Chrome (Google/Swara), Apple (Kalpana/Hemant)
     const femaleHindiVoice = voices.find(v => 
       (v.lang.includes('hi') || v.lang.includes('hi-IN')) && 
-      (v.name.includes('Heera') || v.name.includes('Swara') || v.name.includes('Female') || v.name.includes('Google हिन्दी') || v.name.includes('Natural'))
-    ) || voices.find(v => v.lang.includes('hi'));
+      (
+        v.name.includes('Heera') || 
+        v.name.includes('Swara') || 
+        v.name.includes('Kalpana') || 
+        v.name.includes('Female') || 
+        v.name.includes('Google हिन्दी') || 
+        v.name.includes('Natural')
+      )
+    ) || voices.find(v => v.lang.includes('hi') || v.lang.includes('hi-IN'));
     
     if (femaleHindiVoice) {
       msg.voice = femaleHindiVoice;
