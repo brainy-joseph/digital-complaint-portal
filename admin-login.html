@@ -89,7 +89,6 @@ function handleAdminLogin(e) {
   const entity = document.getElementById('entityList').value;
   document.getElementById('dashTitle').textContent = entity + ' Case Board';
   
-  // Load dynamic complaints into the admin board from localStorage
   loadAdminCases();
 
   document.querySelector('.admin-card').style.display = 'none';
@@ -98,40 +97,39 @@ function handleAdminLogin(e) {
 
 function loadAdminCases() {
   const casesContainer = document.querySelector('.cases');
-  
-  const defaultCases = [
-    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned', type: 'pick' },
-    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review', type: 'pick' },
-    { title: 'Broken transformer near hostel block', location: 'NIT Campus · English', priority: 'High priority', status: 'Assigned', type: 'progress' }
-  ];
-
   const storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
   let allCasesHTML = '';
 
-  // Render user submitted reports from localStorage first
-  storedReports.forEach(rep => {
+  // Render user submitted reports from localStorage
+  storedReports.forEach((rep, index) => {
+    const isAssigned = rep.status === 'Assigned';
+    const btnHTML = isAssigned 
+      ? `<button class="primary" style="padding: 6px 12px; font-size: 12px;">Assigned to You</button>`
+      : `<button class="secondary" onclick="claimCase(${index})">Pick Task</button>`;
+
     allCasesHTML += `
       <div class="case" style="border-left: 4px solid var(--green);">
-        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (New)</small></div>
+        <div><strong>${rep.title}</strong><small>${rep.location} · ${rep.language} (${rep.id})</small></div>
         <div class="priority">${rep.priority}</div>
         <div class="status">${rep.status}</div>
-        <button class="secondary" onclick="claimCase(this)">Pick Task</button>
+        ${btnHTML}
       </div>
     `;
   });
 
-  // Render default mock cases next
+  // Render static mock cases
+  const defaultCases = [
+    { title: 'Large potholes near weekly market', location: 'Kanker, Ward 4 · Gondi', priority: 'High priority', status: 'Unassigned' },
+    { title: 'Waterlogging at primary school entrance', location: 'West Singhbhum · Ho', priority: 'Medium', status: 'Under review' }
+  ];
+
   defaultCases.forEach(c => {
-    const btnHTML = c.type === 'pick' 
-      ? `<button class="secondary" onclick="claimCase(this)">Pick Task</button>` 
-      : `<button class="primary" style="padding: 6px 12px; font-size: 12px;">In Progress</button>`;
-    
     allCasesHTML += `
       <div class="case">
         <div><strong>${c.title}</strong><small>${c.location}</small></div>
         <div class="priority">${c.priority}</div>
         <div class="status">${c.status}</div>
-        ${btnHTML}
+        <button class="secondary" onclick="this.className='primary'; this.style.padding='6px 12px'; this.style.fontSize='12px'; this.textContent='Assigned to You'; this.previousElementSibling.textContent='Assigned';">Pick Task</button>
       </div>
     `;
   });
@@ -139,12 +137,13 @@ function loadAdminCases() {
   casesContainer.innerHTML = allCasesHTML;
 }
 
-function claimCase(btn) {
-  btn.className = 'primary';
-  btn.style.padding = '6px 12px';
-  btn.style.fontSize = '12px';
-  btn.textContent = 'Assigned to You';
-  btn.previousElementSibling.textContent = 'Assigned';
+function claimCase(index) {
+  let storedReports = JSON.parse(localStorage.getItem('jantaSetuReports')) || [];
+  if(storedReports[index]) {
+    storedReports[index].status = 'Assigned';
+    localStorage.setItem('jantaSetuReports', JSON.stringify(storedReports));
+    loadAdminCases(); // Reload list to reflect the updated state instantly
+  }
 }
 </script>
 </body>
