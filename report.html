@@ -84,7 +84,6 @@
       <div class="report-body">
         <div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
         <div class="pane active" id="pane1">
-          
           <div class="field">
             <label class="label">
               Target Authority / Institution
@@ -94,7 +93,7 @@
             </label>
             <select class="select"><option>Local Municipal Body / Panchayat</option><option>University / Educational Campus</option><option>Public Works Department</option></select>
           </div>
-
+          
           <div class="field">
             <label class="label">
               Your language
@@ -211,9 +210,31 @@ function speakField(hiKey, enKey) {
   
   const textToSpeak = isHindiMode ? audioGuideText[hiKey] : audioGuideText[enKey];
   const msg = new SpeechSynthesisUtterance(textToSpeak);
-  msg.lang = isHindiMode ? 'hi-IN' : 'en-US';
+  
+  const voices = window.speechSynthesis.getVoices();
+
+  if (isHindiMode) {
+    msg.lang = 'hi-IN';
+    const femaleHindiVoice = voices.find(v => 
+      (v.lang.includes('hi') || v.lang.includes('hi-IN')) && 
+      (v.name.includes('Heera') || v.name.includes('Swara') || v.name.includes('Female') || v.name.includes('Google हिन्दी') || v.name.includes('Natural'))
+    ) || voices.find(v => v.lang.includes('hi'));
+    
+    if (femaleHindiVoice) {
+      msg.voice = femaleHindiVoice;
+    }
+  } else {
+    msg.lang = 'en-US';
+  }
+
   msg.rate = 0.95;
   window.speechSynthesis.speak(msg);
+}
+
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.getVoices();
+  };
 }
 
 let uploadedImageData = '';
