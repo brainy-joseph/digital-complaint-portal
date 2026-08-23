@@ -11,8 +11,9 @@
   <div class="brand"><div class="mark"></div>JantaSetu</div>
   <nav>
     <a href="#how">How it works</a>
-    <a href="report.html" class="navbtn">Report Issue</a>
-    <a href="admin-login.html" class="navbtn primary-nav">Admin Portal</a>
+    <a href="report.html">Report an issue</a>
+    <a href="#dashboard">Authority view</a>
+    <button class="navbtn">Verify & report</button>
   </nav>
 </header>
 
@@ -21,44 +22,35 @@
   <div>
     <div class="eyebrow">A bridge between communities & action</div>
     <h1>Say it in your language. Get it heard.</h1>
-    <p>JantaSetu converts community voice and text reports into actionable, tracked cases for local government bodies, universities, and partner organizations.</p>
-    
-    <div class="portal-selection">
-      <div class="portal-card">
-        <h3>Citizen Portal</h3>
-        <p>Report local infrastructure, water, or campus issues in your preferred language.</p>
-        <a href="report.html" class="primary button-link">Report an Issue &rarr;</a>
-      </div>
-      <div class="portal-card alt">
-        <h3>Authority & University Portal</h3>
-        <p>Log in as an administrative body to view assigned reports, update statuses, and take action.</p>
-        <a href="admin-login.html" class="secondary button-link">Login as Admin &rarr;</a>
-      </div>
+    <p>JantaSetu lets people report local civic problems through voice or text in their own language. The platform converts the report into a clear, actionable case for the right authority or NGO.</p>
+    <div class="actions">
+      <button class="primary">Report a problem</button>
+      <button class="secondary">See how it works</button>
     </div>
   </div>
-
   <div class="hero-card">
     <div class="card-head">
       <div>
-        <b>Live case board</b>
-        <div class="small">Interactive prototype board</div>
+        <b>Recent community reports</b>
+        <div class="small">Live case board · sample data</div>
       </div>
-      <span class="tag" id="liveTag">3 Active Cases</span>
+      <span class="tag">Open</span>
     </div>
-
-    <div class="board-filter-row">
-      <button class="filter-chip active" onclick="filterHomeBoard('all', this)">All</button>
-      <button class="filter-chip" onclick="filterHomeBoard('Roads', this)">Roads</button>
-      <button class="filter-chip" onclick="filterHomeBoard('University', this)">University</button>
-      <button class="filter-chip" onclick="filterHomeBoard('Water', this)">Water</button>
+    <div class="issue">
+      <div class="issue-top">
+        <b>Road damage</b>
+        <span class="tag">Roads</span>
+      </div>
+      <p>“Our road near the weekly market has deep potholes. Two-wheelers are slipping after rain.”</p>
+      <div class="meta">Kanker · CG <span>•</span> Translated from Gondi</div>
     </div>
-
-    <div id="homeCaseContainer">
-      <!-- Rendered by JavaScript -->
-    </div>
-
-    <div class="board-footer-note">
-      <small>Click "Pick Task" to simulate administrative claim.</small>
+    <div class="issue">
+      <div class="issue-top">
+        <b>Street waterlogging</b>
+        <span class="tag">Drainage</span>
+      </div>
+      <p>“Water stays near the school entrance for several days.”</p>
+      <div class="meta">West Singhbhum · JH <span>•</span> Translated from Ho</div>
     </div>
   </div>
 </section>
@@ -72,6 +64,50 @@
     <div class="step"><div class="num">2</div><h3>Process</h3><p>Speech is converted and categorized automatically into standardized formats.</p></div>
     <div class="step"><div class="num">3</div><h3>Route</h3><p>The system routes complaints directly to the appropriate admin dashboard.</p></div>
     <div class="step"><div class="num">4</div><h3>Resolve</h3><p>Administrators update progress, take action, and close out cases smoothly.</p></div>
+  </div>
+</section>
+
+<section class="dashboard" id="dashboard">
+  <div class="dash">
+    <div class="dash-top">
+      <div>
+        <div class="eyebrow">Demo dashboard</div>
+        <h2>Authority & NGO view</h2>
+        <p class="section-intro">A single place to see what communities are reporting, prioritise cases and track progress.</p>
+      </div>
+      <button class="secondary">Export cases</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="small">Open cases</div><div class="big">128</div><div class="small">Across 6 districts</div></div>
+      <div class="stat"><div class="small">Needs attention</div><div class="big">21</div><div class="small">Marked high priority</div></div>
+      <div class="stat"><div class="small">Resolved this month</div><div class="big">74</div><div class="small">Community-verified</div></div>
+    </div>
+    <div class="cases">
+      <div class="case">
+        <div><strong>Large potholes near weekly market</strong><small>Kanker, Chhattisgarh · Gondi</small></div>
+        <div class="priority">High priority</div>
+        <div class="status">Assigned</div>
+        <div class="small">Road Dept.</div>
+      </div>
+      <div class="case">
+        <div><strong>Waterlogging at school entrance</strong><small>West Singhbhum, Jharkhand · Ho</small></div>
+        <div class="priority">Medium</div>
+        <div class="status">Under review</div>
+        <div class="small">District Admin</div>
+      </div>
+      <div class="case">
+        <div><strong>Transformer not working for 5 days</strong><small>Latehar, Jharkhand · Kurukh</small></div>
+        <div class="priority">High priority</div>
+        <div class="status">New</div>
+        <div class="small">Electricity Dept.</div>
+      </div>
+      <div class="case">
+        <div><strong>Broken handpump near anganwadi</strong><small>Surguja, Chhattisgarh · Chhattisgarhi</small></div>
+        <div class="priority">Medium</div>
+        <div class="status">Assigned</div>
+        <div class="small">Rural Water</div>
+      </div>
+    </div>
   </div>
 </section>
 </main>
