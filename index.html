@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JantaSetu | Civic & Campus Portal</title>
+<title>JantaSetu | Civic & Campus Portal - Jharkhand</title>
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 <header class="top">
@@ -20,16 +21,11 @@
 
 <main>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <section class="hero">
   <div>
-    <div class="eyebrow">A bridge between communities & action</div>
+    <div class="eyebrow">A bridge between communities & action in Jharkhand</div>
     <h1>Say it in your language. Get it heard.</h1>
     <p>JantaSetu lets people report local civic problems through voice or text in their own language. The platform converts the report into a clear, actionable case for the right authority or NGO.</p>
     <div class="actions">
@@ -42,7 +38,7 @@
     <div class="card-head">
       <div>
         <b>Recent community reports</b>
-        <div class="small">Live case board · sample data</div>
+        <div class="small">Live case board · Jharkhand sample data</div>
       </div>
       <span class="tag">Open</span>
     </div>
@@ -52,7 +48,7 @@
         <span class="tag">Roads</span>
       </div>
       <p>“Our road near the weekly market has deep potholes. Two-wheelers are slipping after rain.”</p>
-      <div class="meta">Kanker · CG <span>•</span> Translated from Gondi</div>
+      <div class="meta">Ranchi · JH <span>•</span> Translated from Nagpuri</div>
     </div>
     <div class="issue">
       <div class="issue-top">
@@ -68,7 +64,7 @@
 <section class="section" id="how">
   <div class="eyebrow">Simple by design</div>
   <h2>One portal. Direct routing. Faster action.</h2>
-  <p class="section-intro">Built to simplify reporting for citizens while offering streamlined case assignment for local municipal bodies and educational institutions.</p>
+  <p class="section-intro">Built to simplify reporting for citizens while offering streamlined case assignment for local municipal bodies and educational institutions across Jharkhand.</p>
   <div class="steps">
     <div class="step"><div class="num">1</div><h3>Speak or Type</h3><p>Choose your language and submit issues seamlessly via voice or text input.</p></div>
     <div class="step"><div class="num">2</div><h3>Process</h3><p>Speech is converted and categorized automatically into standardized formats.</p></div>
@@ -79,11 +75,10 @@
 
 <section class="section" style="padding-top: 0;">
   <div class="eyebrow">Geographic overview</div>
-  <h2>Live District Incident Map</h2>
-  <p class="section-intro">Real-time mapping of reported issues across target districts and campuses.</p>
+  <h2>Jharkhand District Incident Map</h2>
+  <p class="section-intro">Real-time mapping of reported issues across Jharkhand districts and campuses.</p>
   <div id="districtMap" style="width: 100%; height: 450px; border-radius: 12px; border: 1px solid var(--line); background: #111;"></div>
 </section>
-
 
 <section class="dashboard" id="dashboard">
   <div class="dash">
@@ -96,13 +91,13 @@
       <button class="secondary" onclick="window.location.href='admin-login.html'">Go to Admin Portal &rarr;</button>
     </div>
     <div class="stats">
-      <div class="stat"><div class="small">Open cases</div><div class="big">128</div><div class="small">Across 6 districts</div></div>
+      <div class="stat"><div class="small">Open cases</div><div class="big">128</div><div class="small">Across 24 Jharkhand districts</div></div>
       <div class="stat"><div class="small">Needs attention</div><div class="big">21</div><div class="small">Marked high priority</div></div>
       <div class="stat"><div class="small">Resolved this month</div><div class="big">74</div><div class="small">Community-verified</div></div>
     </div>
     <div class="cases">
       <div class="case">
-        <div><strong>Large potholes near weekly market</strong><small>Kanker, Chhattisgarh · Gondi</small></div>
+        <div><strong>Large potholes near weekly market</strong><small>Ranchi, Jharkhand · Nagpuri</small></div>
         <div class="priority">High priority</div>
         <div class="status">Assigned</div>
         <div class="small">Road Dept.</div>
@@ -120,7 +115,7 @@
         <div class="small">Electricity Dept.</div>
       </div>
       <div class="case">
-        <div><strong>Broken handpump near anganwadi</strong><small>Surguja, Chhattisgarh · Chhattisgarhi</small></div>
+        <div><strong>Broken handpump near anganwadi</strong><small>Dumka, Jharkhand · Santali</small></div>
         <div class="priority">Medium</div>
         <div class="status">Assigned</div>
         <div class="small">Rural Water</div>
@@ -134,19 +129,23 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  const map = L.map('districtMap', { zoomControl: false }).setView([21.2787, 81.8661], 7);
+  // Centered coordinates on Jharkhand [23.6102, 85.2799]
+  const map = L.map('districtMap', { zoomControl: false }).setView([23.6102, 85.2799], 8);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+  
   const locations = [
-    { name: 'Kanker Municipal Council', coords: [20.2704, 81.4903], count: '42 Open Cases', color: '#ff5c5c' },
-    { name: 'West Singhbhum District', coords: [22.5592, 85.8139], count: '28 Open Cases', color: '#f5a623' },
-    { name: 'Surguja Development Authority', coords: [23.1328, 83.2035], count: '19 Open Cases', color: '#38ef7d' }
+    { name: 'Ranchi Municipal Corporation', coords: [23.3441, 85.3096], count: '42 Open Cases', color: '#ff5c5c' },
+    { name: 'West Singhbhum District Admin', coords: [22.5592, 85.8139], count: '28 Open Cases', color: '#f5a623' },
+    { name: 'Dumka District Authority', coords: [24.2686, 87.2483], count: '19 Open Cases', color: '#38ef7d' },
+    { name: 'Dhanbad Municipal Corporation', coords: [23.7957, 86.4304], count: '39 Open Cases', color: '#ff5c5c' },
+    { name: 'Latehar District Administration', coords: [23.7432, 84.5021], count: '15 Open Cases', color: '#38ef7d' }
   ];
+  
   locations.forEach(loc => {
     L.circleMarker(loc.coords, { radius: 12, color: loc.color, fillColor: loc.color, fillOpacity: 0.7 }).addTo(map).bindPopup(`<b>${loc.name}</b><br>${loc.count}`);
   });
 });
 </script>
-
 
 <script src="script.js"></script>
 </body>
