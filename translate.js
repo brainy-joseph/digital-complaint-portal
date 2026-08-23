@@ -1,5 +1,5 @@
 (function () {
-  // 1. Original static dictionary for custom components
+  // 1. Original static dictionary
   const siteTranslations = {
     English: {
       navHome: "Home",
@@ -50,7 +50,7 @@
     localStorage.setItem('selectedLang', lang);
   };
 
-  // 3. Inject clean custom CSS for Google Translate widget
+  // 3. Inject clean custom CSS globally for Google Translate widget
   const style = document.createElement("style");
   style.innerHTML = `
     body { top: 0px !important; position: static !important; }
@@ -75,12 +75,11 @@
   `;
   document.head.appendChild(style);
 
-  // 4. Dom ready initializations
+  // 4. Initialize widget across any header/navbar structure
   document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('selectedLang') || 'English';
     const dropdownIds = ['globalLang', 'lang'];
 
-    // Sync manual dropdown listeners
     dropdownIds.forEach(id => {
       const selectEl = document.getElementById(id);
       if (selectEl) {
@@ -96,11 +95,11 @@
       }
     });
 
-    // Apply manual translations for data-i18n tags
     window.applyTranslations(savedLang);
 
-    // Auto-inject Google Translate widget into nav bar
-    const nav = document.querySelector("header.top nav") || document.querySelector("nav");
+    // Dynamic insertion that works on any page container
+    const nav = document.querySelector("header nav") || document.querySelector("nav") || document.querySelector("header");
+    
     if (nav && !document.getElementById("google_translate_element")) {
       const translateDiv = document.createElement("div");
       translateDiv.id = "google_translate_element";
